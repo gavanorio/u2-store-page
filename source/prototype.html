@@ -591,10 +591,11 @@ button { font-family: inherit; }
 .lockup .hero-title .sub { display: flex; justify-content: space-between; width: 0; min-width: 100%; font-size: .165em; font-weight: 600; letter-spacing: 0; line-height: 1; margin-top: .42em; padding: 0 var(--inkR) 0 var(--inkL); animation: rise 1.5s cubic-bezier(.2, .7, .1, 1) both; }
 .lockup .hero-title .sub i { font-style: normal; }
 .lockup .lk-logo { display: block; width: 56%; height: auto; margin: 0 0 .11em var(--inkL); }
-.lockup .kicker { width: 0; min-width: 100%; margin-top: .09em; padding: 0 var(--inkR) 0 var(--inkL); font-size: max(10.5px, .05em); font-weight: 600; letter-spacing: .12em; line-height: 1.5; text-align: left; color: rgba(255, 255, 255, .9); }
+.lockup .kicker { width: 0; min-width: 100%; margin-top: .09em; padding: 0 var(--inkR) 0 var(--inkL); font-size: max(10.5px, .05em); font-weight: 600; letter-spacing: .12em; line-height: 1.5; text-align: center; color: rgba(255, 255, 255, .9); }
 .hero [hidden] { display: none; }
 @media (max-width: 760px) { .lockup { font-size: clamp(108px, 38vw, 210px); } .lockup .kicker { font-size: max(8.5px, .058em); letter-spacing: .03em; } }
 .lockup .kicker { white-space: nowrap; }
+.facts-row { text-align: center; } .facts-row > div { justify-items: center; }
 @media (min-width: 761px) { .hero-in { padding-bottom: clamp(120px, 24vh, 260px); } }
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
@@ -1238,15 +1239,14 @@ button { font-family: inherit; }
       if (!d || !d.info) return;
       heard = true;
       if (d.info.muted === false) cmd('mute');
-      if (d.info.playerState === 1 && !shownAt && !pending) { pending = true; setTimeout(show, 1600); }   // playing: wait until the YouTube icon is gone
+      if (d.info.playerState === 1 && !shownAt && !pending) { pending = true; setTimeout(show, 3400); }   // playing: wait until the YouTube icon is gone
       if (d.info.playerState === 0) back();
       if (t1 && typeof d.info.currentTime === 'number' && d.info.currentTime >= t1 - 0.3) back();
     });
     f.addEventListener('load', () => {
       const hello = setInterval(() => { if (heard) return clearInterval(hello); try { f.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {} }, 500);
       setTimeout(() => clearInterval(hello), 15000);
-      cmd('mute');
-      setTimeout(() => { if (!shownAt) show(); }, 5000);          // no state data from the player: show it after 5 s
+      setTimeout(() => { if (!shownAt && !pending) show(); }, 7000);          // no state data from the player: show it after 5 s
       // if the player sends no time data, repeat by the clock
       if (t1 > t0) setInterval(() => { if (!heard && shownAt && Date.now() - shownAt >= (t1 - t0) * 1000) { back(); shownAt = Date.now(); } }, 1000);
     });
