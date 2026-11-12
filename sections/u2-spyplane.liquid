@@ -1177,7 +1177,16 @@
   $('#lbPrev').addEventListener('click', () => lbShow(cur - 1));
   $('#lbNext').addEventListener('click', () => lbShow(cur + 1));
   $('#lbClose').addEventListener('click', () => lb.close());
-  lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+  lb.addEventListener('click', (e) => {
+    if (e.target.closest('button')) return;                       // Previous, Next and Close do their own work
+    const im = $('#lbImg');
+    if (e.target === im && im.naturalWidth) {                     // the picture box is larger than the picture: find the visible picture
+      const r = im.getBoundingClientRect(), k = Math.min(r.width / im.naturalWidth, r.height / im.naturalHeight);
+      const w = im.naturalWidth * k, h = im.naturalHeight * k, x = r.left + (r.width - w) / 2, y = r.top + (r.height - h) / 2;
+      if (e.clientX >= x && e.clientX <= x + w && e.clientY >= y && e.clientY <= y + h) return;
+    }
+    lb.close();
+  });
   lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') lbShow(cur - 1); if (e.key === 'ArrowRight') lbShow(cur + 1); });
 
   /* ---------- hero title: the logo, SPYPLANE and the simulator line get the same width as the ink of "U-2" ---------- */
