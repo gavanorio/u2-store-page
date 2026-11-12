@@ -635,6 +635,8 @@ button { font-family: inherit; }
 .callout .word.long { font-size: clamp(40px, calc((100vw - 700px) * .132), 112px); }
 @media (max-width: 760px) { .callout .word.long { font-size: clamp(40px, 11vw, 80px); } }
 @media (max-width: 760px) { .flare-in { grid-template-columns: minmax(0, 1fr); } }
+.flare-vid { z-index: 0; }
+.flare-vid iframe { transform: translate(-50%, -50%) scale(1.2); }
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
 .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
@@ -1073,6 +1075,7 @@ button { font-family: inherit; }
     <i class="mk" data-alt="12" style="position:absolute;top:34%"></i>
     <div class="flare-stage">
       <img class="flare-bg" id="flareBg" src="img/shot_1.webp" width="2400" height="1153" alt="The U-2S low over a tree line with the gear down on final approach">
+      <div class="hero-vid flare-vid" id="flareVid" data-yt="" data-start="" data-end="" aria-hidden="true"></div>
       <div class="wrap flare-in">
         <div class="flare-copy">
           <p class="eyebrow"><span class="fl">1,500 FT</span>Mobile</p>
@@ -1297,36 +1300,52 @@ button { font-family: inherit; }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   })();
 
-  /* ---------- hero video: muted YouTube segment that repeats, behind the vignette. Black while it loads; the picture is the fallback ---------- */
-  (() => {
-    const box = $('#heroVid'); if (!box || reduce || !box.dataset.yt) return;
+  /* ---------- background video: a muted YouTube segment that repeats behind the text. A black cover hides the player
+     until the video has played for some seconds, so the start icons of YouTube are not seen. The picture is the fallback. ---------- */
+  function ytBackground(box) {
+    if (!box || reduce || !box.dataset.yt || box.dataset.on) return;
+    box.dataset.on = '1';
     const id = box.dataset.yt, t0 = +box.dataset.start || 0, t1 = +box.dataset.end || 0;
+    const lead = Math.min(t0, 5);                              // the video starts this many seconds early, behind the cover
     const f = document.createElement('iframe');
-    f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + id + '&start=' + t0 + '&playsinline=1&rel=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin);
+    f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + id + '&start=' + (t0 - lead) + '&playsinline=1&rel=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin);
     f.allow = 'autoplay; encrypted-media'; f.title = 'U-2 Spyplane video'; f.tabIndex = -1;
-    box.classList.add('on');                                  // black screen while the video loads
+    box.classList.add('on');                                   // black screen while the video loads
     const cmd = (func, args) => { try { f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*'); } catch (e) {} };
-    const back = () => { cmd('seekTo', [t0, true]); cmd('playVideo'); };
-    let heard = false, shownAt = 0, pending = false;
+    let heard = false, shownAt = 0, playedFrom = 0;
     const show = () => { if (shownAt) return; box.classList.add('play'); shownAt = Date.now(); };
+    const back = () => { cmd('seekTo', [t0, true]); cmd('playVideo'); };
     addEventListener('message', (e) => {
       if (e.source !== f.contentWindow) return;
       let d; try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
       if (!d || !d.info) return;
       heard = true;
       if (d.info.muted === false) cmd('mute');
-      if (d.info.playerState === 1 && !shownAt && !pending) { pending = true; setTimeout(show, 3400); }   // playing: wait until the YouTube icon is gone
-      if (d.info.playerState === 0) back();
-      if (t1 && typeof d.info.currentTime === 'number' && d.info.currentTime >= t1 - 0.3) back();
+      if (d.info.playerState === 1 && !playedFrom) playedFrom = Date.now();
+      const ct = d.info.currentTime;
+      if (typeof ct === 'number') {
+        if (!shownAt && ct >= t0 - 0.2 && ct >= (t0 - lead) + 3.5) show();          // the video has really played for 3.5 s or more
+        if (shownAt && d.info.playerState === 0) back();
+        if (shownAt && t1 && ct >= t1 - 0.3) back();
+      }
     });
+    setInterval(() => {
+      if (!shownAt && playedFrom && Date.now() - playedFrom > 6500) show();        // the player gives the state but not the time
+      if (!heard && shownAt && t1 > t0 && Date.now() - shownAt >= (t1 - t0) * 1000) { back(); shownAt = Date.now(); }   // no data at all: repeat by the clock
+    }, 500);
     f.addEventListener('load', () => {
-      const hello = setInterval(() => { if (heard) return clearInterval(hello); try { f.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {} }, 500);
-      setTimeout(() => clearInterval(hello), 15000);
-      setTimeout(() => { if (!shownAt && !pending) show(); }, 7000);          // no state data from the player: show it after 5 s
-      // if the player sends no time data, repeat by the clock
-      if (t1 > t0) setInterval(() => { if (!heard && shownAt && Date.now() - shownAt >= (t1 - t0) * 1000) { back(); shownAt = Date.now(); } }, 1000);
+      const hello = setInterval(() => { if (heard) return clearInterval(hello); try { f.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {} }, 400);
+      setTimeout(() => clearInterval(hello), 20000);
+      setTimeout(() => { if (!shownAt && !heard) show(); }, 11000);                // no data from the player: show it after 11 s
     });
     box.appendChild(f);
+  }
+  ytBackground($('#heroVid'));
+  (() => {                                                     // the landing section video starts when the section comes near the window
+    const box = $('#flareVid'); if (!box || !box.dataset.yt) return;
+    if (!('IntersectionObserver' in window)) return ytBackground(box);
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); ytBackground(box); } }, { rootMargin: '900px 0px' });
+    io.observe(box);
   })();
 
   /* ---------- buy box: each add-on row adds its products to the cart at once ---------- */
