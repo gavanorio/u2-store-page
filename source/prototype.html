@@ -618,10 +618,11 @@ button { font-family: inherit; }
 .buy-x small { display: block; line-height: 1.4; }
 .buy-x small s { color: rgba(255,255,255,.5); margin-right: 4px; }
 .buy-x small strong { color: #fff; font-weight: 600; }
-.flare { background: transparent; position: relative; }
-.flare-stage { position: relative; top: auto; transform: none; }
-.flare-stage[data-pin="pin"] { position: fixed; top: 0; left: 0; right: 0; z-index: 3; }
-.flare-stage[data-pin="post"] { position: absolute; top: auto; bottom: 0; left: 0; right: 0; }
+.flare { position: relative; height: auto; background: #0b0b0b; }
+.flare-stage { position: relative; top: auto; transform: none; height: 100vh; height: 100svh; min-height: 560px; }
+.flare-in { align-items: center; }
+.flare-copy { align-self: end; }
+.callout { align-self: center; }
 .intro-copy p.lead { color: var(--ink); }
 [hidden] { display: none !important; }
 /* final call */
@@ -1058,8 +1059,8 @@ button { font-family: inherit; }
 
   <!-- landing -->
   <section class="flare bleed" id="mobile">
-    <i class="mk" data-alt="1500"></i>
-    <i class="mk" data-alt="12" style="position:absolute;top:52%"></i>
+    <i class="mk" data-alt="1500" style="position:absolute;top:-35%"></i>
+    <i class="mk" data-alt="12" style="position:absolute;top:34%"></i>
     <div class="flare-stage">
       <img class="flare-bg" id="flareBg" src="img/shot_1.webp" width="2400" height="1153" alt="The U-2S low over a tree line with the gear down on final approach">
       <div class="wrap flare-in">
@@ -1074,7 +1075,7 @@ button { font-family: inherit; }
         </div>
       </div>
     </div>
-    <i class="mk" data-alt="0" style="position:absolute;bottom:0"></i>
+    <i class="mk" data-alt="0" style="position:absolute;top:64%"></i>
   </section>
 
   <!-- two releases -->
@@ -1525,12 +1526,6 @@ button { font-family: inherit; }
     dims.style.setProperty('--draw', clamp((vh * 0.92 - dr.top) / (vh * 0.5), 0, 1).toFixed(3));
 
     // landing: mobile's callouts
-    // the landing picture stays in view while the page moves through its section: fixed to the window in that range (the same method as the altitude tape)
-    if (tops.mobile && flareStage) {
-      const end = tops.mobile.top + tops.mobile.h - flareStage.offsetHeight;
-      const st = y < tops.mobile.top ? 'pre' : y > end ? 'post' : 'pin';
-      if (flareStage.dataset.pin !== st) flareStage.dataset.pin = st;
-    }
     const inFlare = tops.mobile && y + vh > tops.mobile.top && y < tops.mobile.top + tops.mobile.h;
     if (inFlare) {
       if (!reduce) flareBg.style.setProperty('--fz', (1 + clamp(1 - alt / 1500, 0, 1) * 0.12).toFixed(4));
