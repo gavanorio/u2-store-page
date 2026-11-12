@@ -582,6 +582,9 @@
 .u2p .pct { display: inline-flex; align-items: center; font: 700 12px/1 var(--sans); font-style: normal; letter-spacing: .02em; background: var(--red); color: #fff; padding: 5px 9px; border-radius: 999px; white-space: nowrap; }
 .u2p .buy-p .pct { align-self: center; font-size: 13px; padding: 6px 10px; }
 .u2p .buy-x { grid-template-columns: 30px minmax(0, 1fr) auto; }
+.u2p .hero-vid { position: absolute; inset: 0; overflow: hidden; container-type: size; pointer-events: none; opacity: 0; transition: opacity 1.2s; background: #000; }
+.u2p .hero-vid.on { opacity: 1; }
+.u2p .hero-vid iframe { position: absolute; top: 50%; left: 50%; border: 0; width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw); transform: translate(-50%, -50%) scale(1.18); }
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
@@ -618,6 +621,7 @@
   <!-- 74,500 ft -->
   <section class="hero bleed" id="top">
     <img class="hero-img" id="heroImg" src="{{ u2base }}shot_6.webp" width="2400" height="1153" fetchpriority="high" alt="The U-2S with the dorsal SPAN antenna, high over a mountain range below a dark blue sky">
+    <div class="hero-vid" id="heroVid" data-yt="r-K6oqHTbV0" data-start="7" aria-hidden="true"></div>
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="wrap hero-in">
       <p class="kicker">For Microsoft Flight Simulator 2024</p>
@@ -1157,6 +1161,16 @@
   $('#lbClose').addEventListener('click', () => lb.close());
   lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
   lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') lbShow(cur - 1); if (e.key === 'ArrowRight') lbShow(cur + 1); });
+
+  /* ---------- hero video: muted YouTube loop behind the vignette; the picture stays below it as the fallback ---------- */
+  (() => {
+    const box = $('#heroVid'); if (!box || reduce || !box.dataset.yt) return;
+    const id = box.dataset.yt, f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + id + '&start=' + (box.dataset.start || 0) + '&playsinline=1&rel=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1';
+    f.allow = 'autoplay; encrypted-media'; f.title = 'U-2 Spyplane video'; f.tabIndex = -1; f.loading = 'eager';
+    f.addEventListener('load', () => setTimeout(() => box.classList.add('on'), 1800));
+    box.appendChild(f);
+  })();
 
   /* ---------- release state: 13 Nov 2026, 14:00Z ---------- */
   const T0 = Date.UTC(2026, 10, 13, 14, 0, 0);
