@@ -584,8 +584,9 @@
 .u2p .buy-x { grid-template-columns: 30px minmax(0, 1fr) auto; }
 .u2p .hero-vid { position: absolute; inset: 0; overflow: hidden; container-type: size; pointer-events: none; opacity: 0; background: #000; }
 .u2p .hero-vid.on { opacity: 1; }
-.u2p .hero-vid iframe { position: absolute; top: 50%; left: 50%; border: 0; width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw); transform: translate(-50%, -50%) scale(1.36); opacity: 0; transition: opacity .9s; }
-.u2p .hero-vid.play iframe { opacity: 1; }
+.u2p .hero-vid iframe { position: absolute; top: 50%; left: 50%; border: 0; width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw); transform: translate(-50%, -50%) scale(1.36); }
+.u2p .hero-vid::after { content: ""; position: absolute; inset: 0; background: #000; transition: opacity 1s; }
+.u2p .hero-vid.play::after { opacity: 0; }
 .u2p .lockup { display: inline-grid; justify-self: start; width: max-content; max-width: 100%; font-size: clamp(108px, 17vw, 270px); --inkL: .07em; --inkR: .05em; }
 .u2p .lockup .hero-title { display: grid; line-height: .82; font-size: 1em; margin: 0; }
 .u2p .lockup .hero-title .big { font-size: 1em; }
