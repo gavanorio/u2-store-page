@@ -82,12 +82,15 @@ body = body.replace('img/liv/', '@@BASE@@liv_').replace('img/', '@@BASE@@')
 assert body.count('<b>USD $36.99</b><s>$39.99</s><em class="pct">-8%</em>') == 2
 body = body.replace('<b>USD $36.99</b><s>$39.99</s><em class="pct">-8%</em>', '<b>@@PRICE@@</b>@@CMP@@')
 body = body.replace('Release offer USD $36.99', 'Release offer @@PRICE@@')
-old = '<div class="buy-x"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>Add it for USD $9.99 more when you buy the U-2.</small></div><em class="pct">-44%</em></div>'
-assert old in body
-body = body.replace(old, '<button type="button" class="buy-x" id="tonAdd" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>Add it for USD $9.99 more when you buy the U-2.</small></div>@@TONBADGE@@</button>')
-body = body.replace('href="https://www.miltechsimulations.com/products/miltech-simulations-u2-spyplane"', 'href="@@PURL@@"')
-assert body.count('Add it for USD $9.99 more when you buy the U-2.') == 1
-body = body.replace('<small>Add it for USD $9.99 more when you buy the U-2.</small>', '<small data-off="@@TONTEXT@@">@@TONTEXT@@</small>')
+T = '<small>Add it for USD $9.99 more when you buy the U-2.</small></div><em class="pct">-44%</em>'
+assert body.count(T) == 1
+body = body.replace(T, '<small>@@TONTEXT@@</small></div>@@TONBADGE@@')
+assert 'USD $44.98 for the two sceneries.' in body
+body = body.replace('USD $44.98 for the two sceneries.', '@@BEALEPRICE@@ for the two sceneries.')
+T = 'Necessary for the 7 missions. USD $9.99 with the U-2.</small></div><em class="pct">-38%</em>'
+assert T in body
+body = body.replace(T, 'Necessary for the 7 missions. @@HUBPRICE@@.</small></div>@@HUBBADGE@@')
+assert body.count('<small>Add it for USD $9.99 more') == 0
 H = 'Add Mission Hub to the cart · USD $9.99 with the U-2 <em class="pct">-38%</em>'
 assert H in body
 body = body.replace(H, 'Add Mission Hub to the cart · @@HUBPRICE@@@@HUBBADGE@@')
@@ -118,22 +121,15 @@ js = js.replace(old, r'''  /* ---------- store cart: add with the Shopify cart f
       btn.textContent = 'Could not add. Try again.'; setTimeout(() => { btn.innerHTML = old; }, 2600);
     } finally { btn.removeAttribute('aria-busy'); }
   }
-  const tonAdd = $('#tonAdd');
-  if (tonAdd) {
-    if (!CART.ton) tonAdd.disabled = true;
-    tonAdd.addEventListener('click', () => {
-      const on = tonAdd.getAttribute('aria-pressed') !== 'true';
-      tonAdd.setAttribute('aria-pressed', on);
-      tonAdd.querySelector('span').textContent = on ? '✓' : '+';
-      const sm = tonAdd.querySelector('small'); sm.textContent = on ? 'It goes to the cart with the U-2.' : sm.dataset.off;
-    });
-  }
+  const addRows = Array.from(document.querySelectorAll('.buy-x[data-add]'));
+  const idsOf = (b) => ((CART.add || {})[b.dataset.add] || []).filter(Boolean);
+  if (CART.u2) addRows.forEach((b) => { if (!idsOf(b).length) b.disabled = true; });
   addCart.addEventListener('click', (e) => {
     if (addCart.getAttribute('aria-disabled') === 'true') { e.preventDefault(); return; }
     if (!CART.u2) return;                      // no store data: the link opens the product page
     e.preventDefault();
     const ids = [CART.u2];
-    if (tonAdd && CART.ton && tonAdd.getAttribute('aria-pressed') === 'true') ids.push(CART.ton);
+    addRows.forEach((b) => { if (b.getAttribute('aria-pressed') === 'true') idsOf(b).forEach((id) => ids.push(id)); });
     addToCart(ids, addCart);
   });''')
 js = js.replace("heroT.textContent = 'Out now · USD $36.99';", "heroT.textContent = 'Out now · ' + CART.price;")
@@ -168,6 +164,9 @@ LIQ_HEAD = '''{%- comment -%} U-2 Spyplane product page. Made from the prototype
   assign u2var = product.selected_or_first_available_variant
   assign u2ton = section.settings.tonopah.selected_or_first_available_variant.id
   assign u2hub = section.settings.hub.selected_or_first_available_variant.id
+  assign u2ba = section.settings.beale_a.selected_or_first_available_variant.id
+  assign u2bb = section.settings.beale_b.selected_or_first_available_variant.id
+  assign u2bsum = section.settings.beale_a.price | plus: section.settings.beale_b.price
 -%}
 '''
 SCHEMA = '''
@@ -179,6 +178,8 @@ SCHEMA = '''
     { "type": "product", "id": "tonopah", "label": "Tonopah product (the add-on in the buy box)" },
     { "type": "text", "id": "tonopah_text", "label": "Tonopah offer text", "default": "Add it for USD $9.99 more when you buy the U-2." },
     { "type": "text", "id": "tonopah_badge", "label": "Tonopah red bubble", "default": "-44%" },
+    { "type": "product", "id": "beale_a", "label": "Beale product 1 (Modern Day)" },
+    { "type": "product", "id": "beale_b", "label": "Beale product 2 (Retro 1980s)" },
     { "type": "product", "id": "hub", "label": "Mission Hub product" },
     { "type": "text", "id": "hub_badge", "label": "Mission Hub red bubble", "default": "-38%" },
     { "type": "text", "id": "hub_code", "label": "Mission Hub discount code", "info": "Leave empty if you use an automatic discount or no discount." },
@@ -196,11 +197,12 @@ liquid = LIQ_HEAD + render(page, {
     '@@HUBBADGE@@': '{% if section.settings.hub_badge != blank %} <em class="pct">{{ section.settings.hub_badge | escape }}</em>{% endif %}',
     '@@PURL@@': '{{ product.url }}',
     '@@TONTEXT@@': '{{ section.settings.tonopah_text | escape }}',
+    '@@BEALEPRICE@@': '{% if u2bsum > 0 %}{{ u2bsum | money }}{% else %}USD $44.98{% endif %}',
     '@@HUBPRICE@@': '{% if section.settings.hub_off != blank %}{{ section.settings.hub_off | escape }}{% elsif section.settings.hub != blank %}{{ section.settings.hub.price | money }}{% else %}USD $15.99{% endif %}',
     '@@HUBCODE@@': '{{ section.settings.hub_code | escape }}',
     '@@HUBOFF@@': '{{ section.settings.hub_off | escape }}',
     '@@IMGJS@@': '{{ u2base | json }}',
-    '@@CARTJS@@': '{ root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, price: {{ product.price | money | strip_html | json }} }',
+    '@@CARTJS@@': '{ root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], beale: [{{ u2ba | default: "null" }}, {{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, price: {{ product.price | money | strip_html | json }} }',
 }) + SCHEMA
 assert liquid.count('{%') == liquid.count('%}')
 
@@ -208,7 +210,7 @@ shutil.rmtree(OUT, ignore_errors=True)
 for d in ('sections', 'templates', 'files'): os.makedirs(f'{OUT}/{d}')
 open(f'{OUT}/sections/u2-spyplane.liquid', 'w', encoding='utf-8').write(liquid)
 json.dump({'sections': {'main': {'type': 'u2-spyplane', 'settings': {
-    'tonopah': 'kbab-beale-air-force-base-retro-1980s-for-msfs2024-copy', 'hub': 'miltech-mission-hub', 'hub_code': '', 'hub_off': 'USD $9.99 with the U-2', 'tonopah_badge': '-44%', 'hub_badge': '-38%', 'tonopah_text': 'Add it for USD $9.99 more when you buy the U-2.'}}}, 'order': ['main']},
+    'tonopah': 'kbab-beale-air-force-base-retro-1980s-for-msfs2024-copy', 'hub': 'miltech-mission-hub', 'beale_a': 'blackbird-simulations-kbab-beale-air-force-base', 'beale_b': 'blackbird-simulations-kbab-beale-air-force-base-retro-1960s-for-msfs2024', 'hub_code': '', 'hub_off': 'USD $9.99 with the U-2', 'tonopah_badge': '-44%', 'hub_badge': '-38%', 'tonopah_text': 'Add it for USD $9.99 more when you buy the U-2.'}}}, 'order': ['main']},
     open(f'{OUT}/templates/product.u2-spyplane.json', 'w'), indent=2)
 
 # pictures: only the files that the page uses, with flat names
@@ -227,7 +229,7 @@ print('liquid KB', len(liquid.encode()) // 1024, 'pictures', len(names), 'missin
 # local test page (no Liquid): the same markup with fixed values
 shutil.rmtree(TEST, ignore_errors=True); os.makedirs(TEST + '/img')
 for f in os.listdir(f'{OUT}/files'): shutil.copy(f'{OUT}/files/{f}', f'{TEST}/img/{f}')
-test = render(page, {'@@BASE@@': 'img/u2s_', '@@PRICE@@': '$36.99', '@@CMP@@': '<s>$39.99</s><em class="pct">-8%</em>', '@@TONBADGE@@': '<em class="pct">-44%</em>', '@@HUBBADGE@@': ' <em class="pct">-38%</em>', '@@PURL@@': '#', '@@TONTEXT@@': 'Add it for USD $9.99 more when you buy the U-2.', '@@HUBPRICE@@': 'USD $15.99', '@@HUBCODE@@': '', '@@HUBOFF@@': '',
-                     '@@IMGJS@@': '"img/u2s_"', '@@CARTJS@@': '{ root: "/", u2: null, ton: null, hub: null, price: "$36.99" }'})
+test = render(page, {'@@BASE@@': 'img/u2s_', '@@PRICE@@': '$36.99', '@@CMP@@': '<s>$39.99</s><em class="pct">-8%</em>', '@@TONBADGE@@': '<em class="pct">-44%</em>', '@@HUBBADGE@@': ' <em class="pct">-38%</em>', '@@PURL@@': '#', '@@BEALEPRICE@@': 'USD $44.98', '@@TONTEXT@@': 'Add it for USD $9.99 more when you buy the U-2.', '@@HUBPRICE@@': 'USD $15.99', '@@HUBCODE@@': '', '@@HUBOFF@@': '',
+                     '@@IMGJS@@': '"img/u2s_"', '@@CARTJS@@': '{ root: "/", u2: null, ton: null, hub: null, add: {}, price: "$36.99" }'})
 theme = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:Georgia,serif;color:#900} h2{font-size:80px;color:green} p{margin:2em} .btn{background:pink!important} button{border:4px solid red}</style></head><body><header style="position:sticky;top:0;z-index:50;height:64px;background:#fff;border-bottom:1px solid #ccc">THEME HEADER</header><main>'
 open(TEST + '/index.html', 'w', encoding='utf-8').write(theme + test + '</main><footer style="padding:40px">THEME FOOTER</footer></body></html>')

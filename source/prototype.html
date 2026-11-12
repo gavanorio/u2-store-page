@@ -609,6 +609,12 @@ button { font-family: inherit; }
 @media (max-width: 420px) { .pair { grid-template-columns: minmax(0, 1fr); } }
 .thumbs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; overflow: visible; padding-bottom: 0; scroll-snap-type: none; }
 .thumbs button { width: auto; }
+.buy-sp { width: 100%; height: 1px; border: 0; margin: 6px 0 0; background: rgba(255,255,255,.14); }
+.buy-l { font: 700 11px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.6); margin: 2px 0 -2px; }
+.buy-x { width: 100%; text-align: left; color: inherit; font: inherit; cursor: pointer; }
+.buy-x[aria-pressed="true"] { border-color: var(--mfd); background: rgba(67, 211, 111, .1); }
+.buy-x:disabled { opacity: .5; cursor: default; }
+.buy-x small { display: block; line-height: 1.4; }
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
 .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
@@ -697,7 +703,11 @@ button { font-family: inherit; }
           <p class="buy-t">The U-2S now. The U-2R and ER-2 come free when they are released.</p>
           <a class="btn btn-light btn-block" id="addCart" href="https://www.miltechsimulations.com/products/miltech-simulations-u2-spyplane" target="_blank" rel="noopener" aria-disabled="true">Available 13 Nov · 14:00Z</a>
           <p class="tminus" id="tminus">Releases 13 November 2026, 14:00Z</p>
-          <div class="buy-x"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>Add it for USD $9.99 more when you buy the U-2.</small></div><em class="pct">-44%</em></div>
+          <hr class="buy-sp">
+          <p class="buy-l">Add to your order</p>
+          <button type="button" class="buy-x" data-add="ton" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>Add it for USD $9.99 more when you buy the U-2.</small></div><em class="pct">-44%</em></button>
+          <button type="button" class="buy-x" data-add="beale" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB: Modern Day and Retro 1980s</b><small>The home base of the U-2, in two eras. USD $44.98 for the two sceneries.</small></div></button>
+          <button type="button" class="buy-x" data-add="hub" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Miltech Mission Hub</b><small>Necessary for the 7 missions. USD $9.99 with the U-2.</small></div><em class="pct">-38%</em></button>
         </div>
         <div class="pair">
           <dl class="compat"><dt>Simulator compatibility</dt><dd>MSFS 2024: Fully compatible</dd><dd class="no">MSFS 2020: Not compatible</dd></dl>
@@ -1257,6 +1267,16 @@ button { font-family: inherit; }
     });
     box.appendChild(f);
   })();
+
+  /* ---------- buy box: add-on rows are switches ---------- */
+  document.querySelectorAll('.buy-x[data-add]').forEach((b) => {
+    const sm = b.querySelector('small'), mark = b.querySelector('span'); sm.dataset.off = sm.textContent;
+    b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', on); mark.textContent = on ? '\u2713' : '+';
+      sm.textContent = on ? 'It goes to the cart with the U-2.' : sm.dataset.off;
+    });
+  });
 
   /* ---------- release state: 13 Nov 2026, 14:00Z ---------- */
   const T0 = Date.UTC(2026, 10, 13, 14, 0, 0);
