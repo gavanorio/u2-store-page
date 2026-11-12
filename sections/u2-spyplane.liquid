@@ -658,7 +658,8 @@
 .u2p .flare-vid iframe { transform: translate(-50%, -50%) scale(1.36); }
 .u2p .hero-vid video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 @media (max-width: 760px) {
-.u2p .lockup { font-size: clamp(120px, 45vw, 250px); }
+.u2p .lockup { font-size: clamp(92px, 31vw, 180px); }
+.u2p .lockup .kicker { font-size: max(8px, .062em); }
 .u2p .lockup { justify-self: center; }
 .u2p .lockup .lk-logo { margin-left: auto; margin-right: auto; }
 .u2p .lockup .kicker { font-size: max(9.5px, .056em); letter-spacing: .04em; }
@@ -694,7 +695,8 @@
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
-.u2p { display: block; position: relative; margin: 0; overflow-x: clip; text-align: left; }
+.u2p { display: block; position: relative; margin: 0; overflow-x: clip; text-align: left; width: 100%; max-width: 100vw; min-width: 0; contain: inline-size; }
+.u2p-section { display: block; width: 100%; max-width: 100vw; min-width: 0; }
 .u2p .buy-x { width: 100%; text-align: left; color: inherit; font: inherit; cursor: pointer; }
 .u2p .buy-x[aria-pressed="true"] { border-color: var(--mfd); background: rgba(67, 211, 111, .1); }
 .u2p .btn[aria-busy="true"] { opacity: .7; pointer-events: none; }
@@ -1227,6 +1229,8 @@
   const $ = (s) => document.querySelector(s);
   const IMG = {{ u2base | json }}, CART = { test: {% if request.design_mode or theme.role != "main" %}true{% else %}false{% endif %}, root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], bealem: [{{ u2ba | default: "null" }}], bealer: [{{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, codes: { ton: {{ section.settings.tonopah_code | json }}, bealem: {{ section.settings.beale_a_code | json }}, bealer: {{ section.settings.beale_b_code | json }}, hub: {{ section.settings.hub_code | json }} }, price: {{ product.price | money | strip_html | json }} };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const pageBox = document.querySelector('.u2p');            // safety: if a theme wrapper makes the page box collapse, give it the window width
+  if (pageBox && pageBox.getBoundingClientRect().width < 280) { pageBox.style.contain = 'none'; pageBox.style.width = '100vw'; }
   let vh = innerHeight, vw = innerWidth;
 
   /* ---------- gallery: the in-sim shots ---------- */
@@ -1728,6 +1732,7 @@
 {
   "name": "U-2 Spyplane page",
   "tag": "section",
+  "class": "u2p-section",
   "settings": [
     { "type": "product", "id": "tonopah", "label": "Tonopah product (the add-on in the buy box)" },
     { "type": "text", "id": "tonopah_text", "label": "Tonopah offer text", "default": "USD $9.99" },

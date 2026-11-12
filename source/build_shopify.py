@@ -66,7 +66,8 @@ for name in ('rise', 'track', 'bit', 'flick', 'pop'):
 assert 'u2p-rise' in css
 css = css.replace('* { box-sizing: border-box; }', '*{box-sizing:border-box}')
 css += '''
-.u2p { display: block; position: relative; margin: 0; overflow-x: clip; text-align: left; }
+.u2p { display: block; position: relative; margin: 0; overflow-x: clip; text-align: left; width: 100%; max-width: 100vw; min-width: 0; contain: inline-size; }
+.u2p-section { display: block; width: 100%; max-width: 100vw; min-width: 0; }
 .u2p .buy-x { width: 100%; text-align: left; color: inherit; font: inherit; cursor: pointer; }
 .u2p .buy-x[aria-pressed="true"] { border-color: var(--mfd); background: rgba(67, 211, 111, .1); }
 .u2p .btn[aria-busy="true"] { opacity: .7; pointer-events: none; }
@@ -182,6 +183,7 @@ SCHEMA = '''
 {
   "name": "U-2 Spyplane page",
   "tag": "section",
+  "class": "u2p-section",
   "settings": [
     { "type": "product", "id": "tonopah", "label": "Tonopah product (the add-on in the buy box)" },
     { "type": "text", "id": "tonopah_text", "label": "Tonopah offer text", "default": "USD $9.99" },
