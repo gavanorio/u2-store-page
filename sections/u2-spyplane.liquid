@@ -606,6 +606,15 @@
 @media (min-width: 761px) {
 .u2p .hero-in { padding-bottom: clamp(120px, 24vh, 260px); }
 }
+.u2p .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+.u2p .pair > * { margin: 0; min-width: 0; }
+.u2p .pair .compat { align-content: start; }
+.u2p .pair .compat dd { font-size: 14.5px; line-height: 1.4; }
+.u2p .pair .compat dd.no::before { background: var(--red); }
+.u2p .pair .manual { font-size: 13.5px; line-height: 1.5; overflow-wrap: anywhere; }
+@media (max-width: 420px) {
+.u2p .pair { grid-template-columns: minmax(0, 1fr); }
+}
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
@@ -686,8 +695,10 @@
           <button type="button" class="buy-x" id="tonAdd" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small data-off="{{ section.settings.tonopah_text | escape }}">{{ section.settings.tonopah_text | escape }}</small></div>{% if section.settings.tonopah_badge != blank %}<em class="pct">{{ section.settings.tonopah_badge | escape }}</em>{% endif %}</button>
           <p class="buy-w"><em>MiltechSimulations.com</em><em>iniBuilds store</em><em class="later">MSFS Marketplace · soon after</em></p>
         </div>
-        <dl class="compat"><dt>Simulator compatibility</dt><dd>MSFS 2024: Fully compatible</dd></dl>
-        <p class="manual">It is highly recommended that you read the manual before using the product. The manual is available at <a href="https://docs.miltechsimulations.com/" target="_blank" rel="noopener">docs.miltechsimulations.com</a>.</p>
+        <div class="pair">
+          <dl class="compat"><dt>Simulator compatibility</dt><dd>MSFS 2024: Fully compatible</dd><dd class="no">MSFS 2020: Not compatible</dd></dl>
+          <p class="manual">It is highly recommended that you read the manual before using the product. The manual is available at <a href="https://docs.miltechsimulations.com/" target="_blank" rel="noopener">docs.miltechsimulations.com</a>.</p>
+        </div>
         <ul class="quick">
           <li><span>At release</span><b>U-2S digital cockpit</b></li>
           <li><span>Free update</span><b>U-2R and ER-2</b></li>
