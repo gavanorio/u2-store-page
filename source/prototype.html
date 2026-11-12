@@ -590,11 +590,12 @@ button { font-family: inherit; }
 .lockup .hero-title .big { font-size: 1em; }
 .lockup .hero-title .sub { display: flex; justify-content: space-between; width: 0; min-width: 100%; font-size: .165em; font-weight: 600; letter-spacing: 0; line-height: 1; margin-top: .42em; padding: 0 var(--inkR) 0 var(--inkL); animation: rise 1.5s cubic-bezier(.2, .7, .1, 1) both; }
 .lockup .hero-title .sub i { font-style: normal; }
-.lockup .lk-logo { display: block; width: 0; min-width: 100%; height: auto; padding: 0 var(--inkR) 0 var(--inkL); margin-bottom: .1em; }
-.lockup .kicker { width: 0; min-width: 100%; margin-top: .09em; padding: 0 var(--inkR) 0 var(--inkL); font-size: max(10.5px, .05em); font-weight: 600; letter-spacing: .12em; line-height: 1.5; text-align: justify; text-align-last: justify; color: rgba(255, 255, 255, .9); }
+.lockup .lk-logo { display: block; width: 56%; height: auto; margin: 0 0 .11em var(--inkL); }
+.lockup .kicker { width: 0; min-width: 100%; margin-top: .09em; padding: 0 var(--inkR) 0 var(--inkL); font-size: max(10.5px, .05em); font-weight: 600; letter-spacing: .12em; line-height: 1.5; text-align: left; color: rgba(255, 255, 255, .9); }
 .hero [hidden] { display: none; }
 @media (max-width: 760px) { .lockup { font-size: clamp(108px, 38vw, 210px); } .lockup .kicker { font-size: max(8.5px, .058em); letter-spacing: .03em; } }
 .lockup .kicker { white-space: nowrap; }
+@media (min-width: 761px) { .hero-in { padding-bottom: clamp(120px, 24vh, 260px); } }
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
 .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }

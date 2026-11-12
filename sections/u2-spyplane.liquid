@@ -591,14 +591,17 @@
 .u2p .lockup .hero-title .big { font-size: 1em; }
 .u2p .lockup .hero-title .sub { display: flex; justify-content: space-between; width: 0; min-width: 100%; font-size: .165em; font-weight: 600; letter-spacing: 0; line-height: 1; margin-top: .42em; padding: 0 var(--inkR) 0 var(--inkL); animation: u2p-rise 1.5s cubic-bezier(.2, .7, .1, 1) both; }
 .u2p .lockup .hero-title .sub i { font-style: normal; }
-.u2p .lockup .lk-logo { display: block; width: 0; min-width: 100%; height: auto; padding: 0 var(--inkR) 0 var(--inkL); margin-bottom: .1em; }
-.u2p .lockup .kicker { width: 0; min-width: 100%; margin-top: .09em; padding: 0 var(--inkR) 0 var(--inkL); font-size: max(10.5px, .05em); font-weight: 600; letter-spacing: .12em; line-height: 1.5; text-align: justify; text-align-last: justify; color: rgba(255, 255, 255, .9); }
+.u2p .lockup .lk-logo { display: block; width: 56%; height: auto; margin: 0 0 .11em var(--inkL); }
+.u2p .lockup .kicker { width: 0; min-width: 100%; margin-top: .09em; padding: 0 var(--inkR) 0 var(--inkL); font-size: max(10.5px, .05em); font-weight: 600; letter-spacing: .12em; line-height: 1.5; text-align: left; color: rgba(255, 255, 255, .9); }
 .u2p .hero [hidden] { display: none; }
 @media (max-width: 760px) {
 .u2p .lockup { font-size: clamp(108px, 38vw, 210px); }
 .u2p .lockup .kicker { font-size: max(8.5px, .058em); letter-spacing: .03em; }
 }
 .u2p .lockup .kicker { white-space: nowrap; }
+@media (min-width: 761px) {
+.u2p .hero-in { padding-bottom: clamp(120px, 24vh, 260px); }
+}
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
