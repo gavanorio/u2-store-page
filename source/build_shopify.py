@@ -213,7 +213,7 @@ liquid = LIQ_HEAD + render(page, {
     '@@HUBCODE@@': '{{ section.settings.hub_code | escape }}',
     '@@HUBOFF@@': '{{ section.settings.hub_off | escape }}',
     '@@IMGJS@@': '{{ u2base | json }}',
-    '@@CARTJS@@': '{ root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], bealem: [{{ u2ba | default: "null" }}], bealer: [{{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, price: {{ product.price | money | strip_html | json }} }',
+    '@@CARTJS@@': '{ test: {% if request.design_mode or theme.role != "main" %}true{% else %}false{% endif %}, root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], bealem: [{{ u2ba | default: "null" }}], bealer: [{{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, price: {{ product.price | money | strip_html | json }} }',
 }) + SCHEMA
 assert liquid.count('{%') == liquid.count('%}')
 

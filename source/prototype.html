@@ -1388,10 +1388,11 @@ button { font-family: inherit; }
   const addCart = $('#addCart'), tminus = $('#tminus'), heroT = $('#heroT');
   addCart.addEventListener('click', (e) => { if (addCart.getAttribute('aria-disabled') === 'true') e.preventDefault(); });
   function relTick() {
-    const d = T0 - Date.now();
+    const test = typeof CART !== 'undefined' && CART.test === true;      // test mode: only in a theme that is not published, or in the theme editor
+    const d = test ? 0 : T0 - Date.now();
     if (d <= 0) {
       addCart.removeAttribute('aria-disabled'); addCart.textContent = 'Add to cart';
-      tminus.innerHTML = '<b>Out now.</b> Release offer until the U-2R and ER-2 arrive.';
+      tminus.innerHTML = test ? '<b>Test mode.</b> The button is open in this theme only, not on the live store.' : '<b>Out now.</b> Release offer until the U-2R and ER-2 arrive.';
       heroT.textContent = 'Out now · USD $36.99';
       return;
     }

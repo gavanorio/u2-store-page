@@ -1191,7 +1191,7 @@
   root.classList.add('js');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s) => document.querySelector(s);
-  const IMG = {{ u2base | json }}, CART = { root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], bealem: [{{ u2ba | default: "null" }}], bealer: [{{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, price: {{ product.price | money | strip_html | json }} };
+  const IMG = {{ u2base | json }}, CART = { test: {% if request.design_mode or theme.role != "main" %}true{% else %}false{% endif %}, root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], bealem: [{{ u2ba | default: "null" }}], bealer: [{{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, price: {{ product.price | money | strip_html | json }} };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   let vh = innerHeight, vw = innerWidth;
 
@@ -1408,10 +1408,11 @@
     addToCart([CART.u2], addCart);
   });
   function relTick() {
-    const d = T0 - Date.now();
+    const test = typeof CART !== 'undefined' && CART.test === true;      // test mode: only in a theme that is not published, or in the theme editor
+    const d = test ? 0 : T0 - Date.now();
     if (d <= 0) {
       addCart.removeAttribute('aria-disabled'); addCart.textContent = 'Add to cart';
-      tminus.innerHTML = '<b>Out now.</b> Release offer until the U-2R and ER-2 arrive.';
+      tminus.innerHTML = test ? '<b>Test mode.</b> The button is open in this theme only, not on the live store.' : '<b>Out now.</b> Release offer until the U-2R and ER-2 arrive.';
       heroT.textContent = 'Out now · ' + CART.price;
       return;
     }
