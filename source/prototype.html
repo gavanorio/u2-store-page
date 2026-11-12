@@ -736,11 +736,9 @@ button { font-family: inherit; }
         <i class="mk" data-alt="70000"></i>
       </div>
       <div class="intro-copy">
-        <p class="lead">The U-2 flies where almost nothing else can. One engine, one seat and a 103-foot wing take it above 70,000 feet, to the edge of space, on missions that last more than 14 hours.</p>
-        <p>At that altitude, the pilot wears a pressure suit and only a few knots divide a stall from too much speed. Then comes the hard part. The U-2 is one of the most difficult aircraft in the world to land.</p>
-        <p>The Miltech Simulations U-2S brings the aircraft that the U.S. Air Force flies today to Microsoft Flight Simulator 2024, system by system. It has a glass cockpit with three multi-function displays, and an inertial navigation system that you must align before it can steer you. The fuel, electrical, hydraulic, oxygen, autopilot and lift spoiler systems are all made for this aircraft, and all of them are yours to manage.</p>
-        <p>On the ground, the U-2 balances on a bicycle landing gear and two pogo wheels that fall away on takeoff. On final approach, a second pilot in a chase car follows you down the runway and calls your height, foot by foot.</p>
-        <p>Start from cold and dark and do each step yourself, or let the EFB prepare the aircraft and go fly.</p>
+        <p class="lead">Step into the cockpit of one of the most legendary aircraft ever built. Designed in 1954 to photograph the Soviet Union from heights no fighter or missile could reach, the U-2 uncovered the missile sites that triggered the Cuban Missile Crisis, shadowed a surveillance balloon across the United States in 2023, and remains in front-line service more than seventy years after its first flight at Groom Lake. The Miltech Simulations U-2S brings this remarkable aircraft to Microsoft Flight Simulator 2024 in exceptional depth, built from public data records and modelled from the wingtip skids to the edge of space.</p>
+        <p>Widely regarded as the hardest aircraft in the world to fly, the U-2 rewards precision at every stage of flight. A 103 ft glider wing, a powerful GE F118 engine and bicycle landing gear combine to create a flying experience unlike any other: a climb of more than 40° nose up, a cruise between 70,000 and 80,000 ft where only a few knots separate the stall from the speed limit, and a landing flown at the very edge of the stall while a chase car races down the runway behind you, calling out your height. With no autothrottle, no antiskid and no differential brakes, every flight is yours from start to finish.</p>
+        <p>At the heart of the U-2 is its mission. Whether you are painting a radar map through solid cloud, locking the SYERS-2A camera onto a distant target, or running panoramic film over a recording line, each of the three fully working sensors builds its picture live from real map data. With more than 20 sensor configurations, a complete ground support operation, three hand-crafted sceneries and seven missions included, this is the definitive high-altitude reconnaissance experience for the simulator. The U-2R and NASA’s ER-2 follow as a free update.</p>
       </div>
     </div>
   </section>
@@ -857,76 +855,97 @@ button { font-family: inherit; }
       <h2 style="margin-top:16px">Features</h2>
       <i class="mk" data-alt="55000"></i>
       <div class="tabs" role="tablist" aria-label="Feature areas">
-        <button class="tab" role="tab" id="t-cockpit" aria-controls="p-cockpit" aria-selected="true">Cockpit</button>
-        <button class="tab" role="tab" id="t-nav" aria-controls="p-nav" aria-selected="false" tabindex="-1">Navigation</button>
-        <button class="tab" role="tab" id="t-sys" aria-controls="p-sys" aria-selected="false" tabindex="-1">Systems</button>
-        <button class="tab" role="tab" id="t-sens" aria-controls="p-sens" aria-selected="false" tabindex="-1">Sensors &amp; EFB</button>
-        <button class="tab" role="tab" id="t-ground" aria-controls="p-ground" aria-selected="false" tabindex="-1">Ground ops</button>
-        <button class="tab" role="tab" id="t-ext" aria-controls="p-ext" aria-selected="false" tabindex="-1">Exterior</button>
+        <button class="tab" role="tab" id="t-sens" aria-controls="p-sens" aria-selected="true">Sensors &amp; Mission Fit</button>
+        <button class="tab" role="tab" id="t-flight" aria-controls="p-flight" aria-selected="false" tabindex="-1">Flight Model</button>
+        <button class="tab" role="tab" id="t-cockpit" aria-controls="p-cockpit" aria-selected="false" tabindex="-1">Cockpit &amp; Systems</button>
+        <button class="tab" role="tab" id="t-sounds" aria-controls="p-sounds" aria-selected="false" tabindex="-1">Sounds</button>
+        <button class="tab" role="tab" id="t-chase" aria-controls="p-chase" aria-selected="false" tabindex="-1">Chase Car &amp; Ground Crews</button>
+        <button class="tab" role="tab" id="t-efb" aria-controls="p-efb" aria-selected="false" tabindex="-1">EFB &amp; Datalink Portal</button>
+        <button class="tab" role="tab" id="t-scen" aria-controls="p-scen" aria-selected="false" tabindex="-1">Sceneries</button>
+        <button class="tab" role="tab" id="t-miss" aria-controls="p-miss" aria-selected="false" tabindex="-1">Missions</button>
+        <button class="tab" role="tab" id="t-free" aria-controls="p-free" aria-selected="false" tabindex="-1">Free Future Updates</button>
       </div>
-      <div class="panel-f" role="tabpanel" id="p-cockpit" aria-labelledby="t-cockpit">
-        <div><h3>Cockpit</h3><ul>
-          <li>The full glass cockpit of the U-2S: three large multi-function displays, an up-front control display, a backup control display unit and a standby flight display.</li>
-          <li>More than 40 MFD pages are simulated, and each display shows the page you select.</li>
-          <li>Each display does its own power-on test and then waits for the avionics processor. In the EFB, you can choose a quick start or the realistic two minutes.</li>
-          <li>Cold and dark means cold and dark. The battery, generators, fuel pumps, lights, oxygen, avionics and autopilot channels are all off, and the canopy is open.</li>
-          <li>The battery alone can power every display and radio, but not for long. Bring the generators on, or connect ground power.</li>
-          <li>The throttle has a real OFF / IDLE stop, and the speedbrakes and the wing lift spoilers have separate controls, as on the real aircraft.</li>
+      <div class="panel-f" role="tabpanel" id="p-sens" aria-labelledby="t-sens">
+        <div><h3>Sensors &amp; Mission Fit</h3><ul>
+          <li>Fully working ASARS-2 synthetic aperture radar, with a search fan out to 320 NM and spot patches as small as 0.1 NM, by day, at night and through cloud.</li>
+          <li>Long-range SYERS-2A digital camera with five selectable bands, zoom from 0.5x to 73x and spot lock up to 85° to either side.</li>
+          <li>Panoramic optical bar film camera, shooting around 1,600 frames of grainy black-and-white film with exposure driven by the sun.</li>
+          <li>Live sensor imagery on the cockpit displays, generated in real time from real map data.</li>
+          <li>More than 20 fully customisable configurations, combining three noses, two superpod types, the Senior Spear fairing, SPAN satellite antenna, dorsal sensors and belly sensor.</li>
+          <li>Dynamic mission fit, with every option changing the shape, weight and balance of the aircraft.</li>
+          <li>Authentic Mark IV panel, with individual start sequences, warm-up times and self-tests for each sensor.</li>
         </ul></div>
-        <figure><img width="2400" height="1153" src="img/shot_2.webp" loading="lazy" alt="Pilot's view of the U-2S cockpit above a deck of clouds"><figcaption>Above the clouds, in the sim.</figcaption></figure>
+        <figure><img width="2400" height="1153" src="img/shot_6.webp" loading="lazy" alt="The U-2S with the dorsal SPAN antenna, high over a mountain range"><figcaption>The SPAN antenna fit, in the sim.</figcaption></figure>
       </div>
-      <div class="panel-f" role="tabpanel" id="p-nav" aria-labelledby="t-nav" hidden>
-        <div><h3>Navigation</h3><ul>
-          <li>You must align the INS before it can take you anywhere. A full alignment takes 22 minutes and a limited one takes 5. If you have less time, shorten it in the EFB.</li>
-          <li>If you lose the alignment in the air, you can align again in flight, update from GPS or enter your position by hand.</li>
-          <li>The steering computer follows the active destination point file. You see the same route on the MFD NAV / DPS page and on the map.</li>
-          <li>All the steering modes are there: F/T, T/T, T/F, TTD and TFD, with direct steer, overfly and orbits.</li>
-          <li>The flight director, the miles and time to go, and the autopilot NAV mode all follow your destination points.</li>
-          <li>Build and change your route on the MFD, on the UFCD DP page or on the BCDU. Use the one you prefer.</li>
+      <div class="panel-f" role="tabpanel" id="p-flight" aria-labelledby="t-flight" hidden>
+        <div><h3>Flight Model</h3><ul>
+          <li>Highly detailed flight model built from public data records, capturing the narrow speed corridor at cruise altitude.</li>
+          <li>Realistic ground effect and wing flex, recreating the long float of the 103 ft wing.</li>
+          <li>Bicycle landing gear with pogos that fall away on takeoff, leaving every landing to end on a wingtip skid.</li>
+          <li>Weight-dependent performance, with fuel making up around half of the takeoff weight and transforming the aircraft as it burns off.</li>
         </ul></div>
-        <figure class="screen"><img src="img/scr_mfd_pfd.png" width="778" height="1024" loading="lazy" alt="The primary flight display with the horizontal situation display below it"><figcaption>PFD captured in the sim.</figcaption></figure>
+        <figure><img width="2400" height="1153" src="img/shot_7.webp" loading="lazy" alt="The U-2S banking over desert and cloud with superpods fitted"><figcaption>High over the desert, in the sim.</figcaption></figure>
       </div>
-      <div class="panel-f" role="tabpanel" id="p-sys" aria-labelledby="t-sys" hidden>
-        <div><h3>Systems</h3><ul>
-          <li>Fuel is in five tanks: two wing tanks, two auxiliary tanks and the sump, which feeds the engine. Keep the wings in balance with cross-transfer, or dump fuel when you must.</li>
-          <li>Electrical power comes from the battery and the generators, through essential and monitored buses.</li>
-          <li>The hydraulic system is modeled, and a warning tells you if the gear is still up when you set the aircraft for landing.</li>
-          <li>Liquid oxygen, cabin pressure and the canopy seal are yours to set before takeoff. If you lose the cabin at altitude, hypoxia starts.</li>
-          <li>The engine starts with air from a pneumatic starting cart. In flight, the AIRSTART button on the throttle fires the emergency start system.</li>
-          <li>The autopilot has separate pitch, roll and yaw channels, with gust control and automatic stall strips.</li>
+      <div class="panel-f" role="tabpanel" id="p-cockpit" aria-labelledby="t-cockpit" hidden>
+        <div><h3>Cockpit &amp; Systems</h3><ul>
+          <li>Digital U-2S cockpit with three multi-function displays and more than 40 modelled pages.</li>
+          <li>Functional UFCD keypad, BCDU backup computer, inertial navigation and standby display.</li>
+          <li>In-depth fuel system with four wing tanks, sump tank, boost and cross-transfer pumps, and fuel dump.</li>
+          <li>Complete electrical and hydraulic simulation, including main AC and DC generators, standby generator, battery and emergency inverter.</li>
+          <li>Cabin pressure and dual liquid-oxygen converters, with hypoxia effects should they fail.</li>
+          <li>Three-axis autopilot with altitude and Mach hold, alongside lift spoilers, speedbrakes and gust control.</li>
+          <li>Comprehensive alerting, with warning lamps, Master Caution and an alert line on every display.</li>
         </ul></div>
-        <figure class="screen"><img src="img/scr_mfd_perf.png" width="778" height="1024" loading="lazy" alt="The PERF page with engine, oil, hydraulic, fuel, cabin and oxygen readouts"><figcaption>PERF page captured in the sim.</figcaption></figure>
+        <figure><img width="2400" height="1153" src="img/shot_2.webp" loading="lazy" alt="Pilot&#x27;s view of the U-2S cockpit above a deck of clouds"><figcaption>Above the clouds, in the sim.</figcaption></figure>
       </div>
-      <div class="panel-f" role="tabpanel" id="p-sens" aria-labelledby="t-sens" hidden>
-        <div><h3>Sensors &amp; EFB</h3><ul>
-          <li>Choose one of three sensor noses, ASARS-2, SPAN or IR/EO, and add the superpods and the dorsal SPAN antenna. Change them in the EFB, on the ground or in flight. Their weight goes into the payload.</li>
-          <li>When you are online, the camera and radar pages show the real ground below you, made from live map imagery and terrain data.</li>
-          <li>The electronic warfare system has its own MFD page, a threat history map and a self-test.</li>
-          <li>The U-2 EFB sets the aircraft state for you (Cold and Dark, Ready to Taxi or Ready for Takeoff). It also sets the INS alignment time and the avionics start-up time, and it calls the starting air.</li>
-          <li>31 normal checklists are on the MFD EFA pages. They take you from a cold and dark cockpit to shutdown.</li>
+      <div class="panel-f" role="tabpanel" id="p-sounds" aria-labelledby="t-sounds" hidden>
+        <div><h3>Sounds</h3><ul>
+          <li>Immersive sound set by Echo19, recorded from the same engine type that powers the U-2S.</li>
+          <li>Distinctive approach tones, building to the stall tone at touchdown.</li>
         </ul></div>
-        <figure><img width="2400" height="1153" src="img/shot_5.webp" loading="lazy" alt="The cockpit at dawn with the EFB tablet and the lit displays"><figcaption>The U-2 EFB at dawn.</figcaption></figure>
+        <figure><img width="1760" height="1120" src="img/c_6.webp" loading="lazy" alt="Head-on view of the U-2S in flight"><figcaption>Head-on, in the sim.</figcaption></figure>
       </div>
-      <div class="panel-f" role="tabpanel" id="p-ground" aria-labelledby="t-ground" hidden>
-        <div><h3>Ground ops</h3><ul>
-          <li>The U-2 has a bicycle landing gear: one main gear, a steerable tailwheel and two pogo wheels that hold the wings level.</li>
-          <li>On the takeoff roll, each pogo falls away by itself when its wing starts to fly, between 60 and 88 knots.</li>
-          <li>After you land, stop and wait. The ground crew comes to you, fits the two pogos and levels the aircraft in about half a minute.</li>
-          <li>A chase car joins you on final approach and calls your height in the flare.</li>
-          <li>In the walkaround, one click removes every gear pin and pogo flag. The EFB presets can do it for you too.</li>
-          <li>Ask for ground power and starting air from the EFB when you need them.</li>
+      <div class="panel-f" role="tabpanel" id="p-chase" aria-labelledby="t-chase" hidden>
+        <div><h3>Chase Car &amp; Ground Crews</h3><ul>
+          <li>Self-driving chase car that follows you to the runway and chases every takeoff and landing.</li>
+          <li>Voiced height calls in the flare, with rudder corrections to keep you on the centreline.</li>
+          <li>Animated runway crew to pull the pogo pins before departure, and a pogo crew to refit them after landing.</li>
+          <li>Full ground support fleet, including ground power unit, air-start cart, oxygen cart, boarding stairs and crew van, driven to the aircraft on request.</li>
         </ul></div>
         <figure><img width="1760" height="1120" src="img/c_4.webp" loading="lazy" alt="The U-2S on the ramp with the crew van and a ground cart"><figcaption>On the ramp, in the sim.</figcaption></figure>
       </div>
-      <div class="panel-f" role="tabpanel" id="p-ext" aria-labelledby="t-ext" hidden>
-        <div><h3>Exterior</h3><ul>
-          <li>The whole airframe has panel lines, rivet rows, stencils and antennas, in physically based materials.</li>
-          <li>The sensors change the shape of the aircraft: the ASARS-2, SPAN and IR/EO noses, the superpods and the dorsal antenna.</li>
-          <li>Navigation, beacon, landing and taxi lights are all there.</li>
-          <li>The engine is the GE F118 turbofan, with 17,792 lbf of static thrust.</li>
-          <li>19 liveries come with the aircraft, including the default USAF scheme.</li>
+      <div class="panel-f" role="tabpanel" id="p-efb" aria-labelledby="t-efb" hidden>
+        <div><h3>EFB &amp; Datalink Portal</h3><ul>
+          <li>Feature-rich tablet for aircraft fit, ground equipment, settings and quick-start presets.</li>
+          <li>Integrated SimBrief import, with charts clipped to the sunshade.</li>
+          <li>Selectable food tubes and drink bottles for those very long sorties.</li>
+          <li>Dedicated Datalink Portal website, preserving your flight tracks, camera captures, weather and statistics after every flight.</li>
         </ul></div>
-        <figure><img width="2400" height="1153" src="img/shot_9.webp" loading="lazy" alt="Head-on view of the U-2S with the pilot under the canopy"><figcaption>Head-on, in the sim.</figcaption></figure>
+        <figure><img width="2400" height="1153" src="img/shot_5.webp" loading="lazy" alt="The cockpit at dawn with the EFB tablet and the lit displays"><figcaption>The U-2 EFB at dawn.</figcaption></figure>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-scen" aria-labelledby="t-scen" hidden>
+        <div><h3>Sceneries</h3><ul>
+          <li>RAF Akrotiri (LCRA), the U-2 base on the south coast of Cyprus, complete with hardened shelters and a full RAF ramp.</li>
+          <li>RAF Fairford (EGVA), the European home of the U-2, with ILS approaches at both ends.</li>
+          <li>Groom Lake (KXTA), the Cold War test site recreated as it stood in the 1960s, with lake-bed runways and period aircraft.</li>
+          <li>Dedicated U-2 parking at Akrotiri and Fairford, with room for the complete ground equipment set.</li>
+        </ul></div>
+        <figure><img width="1100" height="619" src="img/x_sc3.webp" loading="lazy" alt="The U-2S on the ramp in front of the hangars at an included scenery"><figcaption>An included scenery, in the sim.</figcaption></figure>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-miss" aria-labelledby="t-miss" hidden>
+        <div><h3>Missions</h3><ul>
+          <li>Seven hand-built missions in the U-2 Spyplane Mission Pack for Miltech Mission Hub.</li>
+          <li>Varied objectives, from a first solo at Groom Lake to NASA science surveys and reconnaissance flights over North Korea and Iran.</li>
+        </ul></div>
+        <figure><img width="2400" height="1153" src="img/shot_10.webp" loading="lazy" alt="The U-2S over a carrier group at sea"><figcaption>Over the sea, in the sim.</figcaption></figure>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-free" aria-labelledby="t-free" hidden>
+        <div><h3>Free Future Updates</h3><ul>
+          <li>U-2R with the classic round-dial cockpit and J75 engine.</li>
+          <li>NASA’s ER-2 high-altitude research variant.</li>
+          <li>5 to 10 additional missions and period chase cars.</li>
+        </ul></div>
+        <figure><img width="1760" height="1120" src="img/c_1.webp" loading="lazy" alt="Close view of the fuselage with chalk art behind the cockpit"><figcaption>Detail of the airframe, in the sim.</figcaption></figure>
       </div>
     </div>
   </section>
