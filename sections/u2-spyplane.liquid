@@ -636,6 +636,21 @@
 .u2p .callout { align-self: center; }
 .u2p .intro-copy p.lead { color: var(--ink); }
 .u2p [hidden] { display: none !important; }
+.u2p .info-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.u2p .info-grid p, .u2p .info-grid a { font-weight: 400; }
+@media (max-width: 900px) {
+.u2p .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+.u2p .info-grid { grid-template-columns: minmax(0, 1fr); }
+}
+.u2p .flare-in { grid-template-columns: minmax(0, 540px) minmax(0, 1fr); }
+.u2p .callout { min-width: 0; }
+.u2p .callout .word { white-space: nowrap; }
+.u2p .callout .word.long { font-size: clamp(40px, 7.2vw, 118px); }
+@media (max-width: 760px) {
+.u2p .flare-in { grid-template-columns: minmax(0, 1fr); }
+}
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
@@ -1116,11 +1131,9 @@
       <div class="info-grid">
         <div><h3>Supported simulator</h3><p>Microsoft Flight Simulator 2024</p></div>
         <div><h3>Platform</h3><p>PC at release at this time. The console version is releasing on Marketplace in a few weeks.</p></div>
-        <div><h3>Included</h3><p>U-2S, 19 liveries, 4 sceneries, 7 missions</p></div>
         <div><h3>Manual and Paintkit</h3><p><a href="https://docs.miltechsimulations.com/" target="_blank" rel="noopener">Documentation hub</a></p></div>
         <div><h3>Disk space</h3><p>About 20 GB of free disk space</p></div>
         <div><h3>Graphics memory</h3><p>A low VRAM version is available for GPUs with less than 8 GB.</p></div>
-        <div><h3>Controls</h3><p>A joystick is recommended, with two spare buttons for the speedbrakes and the lift spoilers.</p></div>
         <div><h3>Activation</h3><p>An internet connection is required for activation.</p></div>
       </div>
     </div>
@@ -1131,7 +1144,7 @@
     <div class="wrap final-head">
       <p class="eyebrow">Miltech Simulations</p>
       <h2>Ready when you are.</h2>
-      <p class="lede">Start cold and dark on the ramp, or let the EFB set the aircraft up for you. The U-2 releases on 13 November at 14:00Z.</p>
+      <p class="lede">Start from cold and dark, or let the EFB prepare the aircraft. Then climb to the edge of space, fly your mission, and bring it home with the chase car behind you. The U-2 releases on 13 November at 14:00Z.</p>
     </div>
     <div class="ground">
       <img src="{{ u2base }}ground.webp" width="1800" height="1012" loading="lazy" alt="The U-2S seen from ahead and above">
@@ -1544,6 +1557,7 @@
       const w = alt > 12 ? 'On final' : alt > 6.5 ? '“Ten…”' : alt > 3 ? '“Five…”' : alt > 1.4 ? '“Two…”' : alt > 0.3 ? '“One…”' : 'Touchdown';
       if (w !== lastWord) {
         word.textContent = w; lastWord = w;
+        word.classList.toggle('long', w.length > 7);
         if (!reduce) { word.classList.remove('pop'); void word.offsetWidth; word.classList.add('pop'); }
       }
     }
