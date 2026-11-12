@@ -615,6 +615,8 @@
 @media (max-width: 420px) {
 .u2p .pair { grid-template-columns: minmax(0, 1fr); }
 }
+.u2p .thumbs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; overflow: visible; padding-bottom: 0; scroll-snap-type: none; }
+.u2p .thumbs button { width: auto; }
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }

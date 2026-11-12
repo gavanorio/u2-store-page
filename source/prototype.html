@@ -607,6 +607,8 @@ button { font-family: inherit; }
 .pair .compat dd.no::before { background: var(--red); }
 .pair .manual { font-size: 13.5px; line-height: 1.5; overflow-wrap: anywhere; }
 @media (max-width: 420px) { .pair { grid-template-columns: minmax(0, 1fr); } }
+.thumbs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; overflow: visible; padding-bottom: 0; scroll-snap-type: none; }
+.thumbs button { width: auto; }
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
 .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
