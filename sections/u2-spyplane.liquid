@@ -692,6 +692,27 @@
 .u2p .final { padding-top: 56px; }
 .u2p .final-buy { padding-bottom: 48px; }
 }
+@media (max-width: 760px) {
+.u2p .history { padding-bottom: 52px; }
+.u2p .his-hero { min-height: 340px; }
+.u2p .his-hero .wrap { padding-bottom: 20px; gap: 12px; }
+.u2p .rail { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; overflow: visible; padding: 4px 0 0; scroll-snap-type: none; border-top: 1px solid rgba(255,255,255,.12); }
+.u2p .plq { width: auto; grid-template-columns: 64px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; padding: 14px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,.12); border-radius: 0; background: transparent; }
+.u2p .plq .y { grid-column: 1; grid-row: 1 / span 4; align-self: start; font-size: 24px; line-height: 1.15; color: var(--brass); -webkit-text-stroke: 0; }
+.u2p .plq .n, .u2p .plq h3, .u2p .plq p, .u2p .plq em { grid-column: 2; }
+.u2p .plq .n { font-size: 9.5px; }
+.u2p .plq h3 { font-size: 16.5px; line-height: 1.25; }
+.u2p .plq p { font-size: 14px; line-height: 1.5; }
+.u2p .plq em { font-size: 11px; margin-top: 2px; }
+.u2p .hard { margin-top: 40px; padding-top: 32px; gap: 14px; }
+.u2p .six { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.u2p .six div { padding: 14px 12px; gap: 4px; }
+.u2p .six b { font-size: 21px; }
+.u2p .six small { font-size: 9.5px; letter-spacing: .12em; }
+.u2p .six p { font-size: 13px; line-height: 1.45; }
+.u2p .cc { padding: 12px; }
+.u2p .cc figcaption { font-size: 13.5px; }
+}
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }

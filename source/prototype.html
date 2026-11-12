@@ -673,6 +673,27 @@ button { font-family: inherit; }
   .final { padding-top: 56px; }
   .final-buy { padding-bottom: 48px; }
 }
+@media (max-width: 760px) {
+  .history { padding-bottom: 52px; }
+  .his-hero { min-height: 340px; }
+  .his-hero .wrap { padding-bottom: 20px; gap: 12px; }
+  .rail { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; overflow: visible; padding: 4px 0 0; scroll-snap-type: none; border-top: 1px solid rgba(255,255,255,.12); }
+  .plq { width: auto; grid-template-columns: 64px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; padding: 14px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,.12); border-radius: 0; background: transparent; }
+  .plq .y { grid-column: 1; grid-row: 1 / span 4; align-self: start; font-size: 24px; line-height: 1.15; color: var(--brass); -webkit-text-stroke: 0; }
+  .plq .n, .plq h3, .plq p, .plq em { grid-column: 2; }
+  .plq .n { font-size: 9.5px; }
+  .plq h3 { font-size: 16.5px; line-height: 1.25; }
+  .plq p { font-size: 14px; line-height: 1.5; }
+  .plq em { font-size: 11px; margin-top: 2px; }
+  .hard { margin-top: 40px; padding-top: 32px; gap: 14px; }
+  .six { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .six div { padding: 14px 12px; gap: 4px; }
+  .six b { font-size: 21px; }
+  .six small { font-size: 9.5px; letter-spacing: .12em; }
+  .six p { font-size: 13px; line-height: 1.45; }
+  .cc { padding: 12px; }
+  .cc figcaption { font-size: 13.5px; }
+}
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
 .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
