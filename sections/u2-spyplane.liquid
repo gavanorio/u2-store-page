@@ -620,12 +620,15 @@
 }
 .u2p .thumbs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; overflow: visible; padding-bottom: 0; scroll-snap-type: none; }
 .u2p .thumbs button { width: auto; }
-.u2p .buy-sp { width: 100%; height: 1px; border: 0; margin: 6px 0 0; background: rgba(255,255,255,.14); }
+.u2p .buy-sp { width: 25%; height: 1px; border: 0; margin: 12px auto 12px; justify-self: center; background: rgba(255,255,255,.28); }
+.u2p .buy-x[aria-busy="true"] { opacity: .7; }
 .u2p .buy-l { font: 700 11px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.6); margin: 2px 0 -2px; }
 .u2p .buy-x { width: 100%; text-align: left; color: inherit; font: inherit; cursor: pointer; }
 .u2p .buy-x[aria-pressed="true"] { border-color: var(--mfd); background: rgba(67, 211, 111, .1); }
 .u2p .buy-x:disabled { opacity: .5; cursor: default; }
 .u2p .buy-x small { display: block; line-height: 1.4; }
+.u2p .flare { background: transparent; }
+.u2p .flare-stage { position: relative; top: auto; will-change: transform; }
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
@@ -704,7 +707,6 @@
           <a class="btn btn-light btn-block" id="addCart" href="https://www.miltechsimulations.com/products/miltech-simulations-u2-spyplane" target="_blank" rel="noopener" aria-disabled="true">Available 13 Nov · 14:00Z</a>
           <p class="tminus" id="tminus">Releases 13 November 2026, 14:00Z</p>
           <hr class="buy-sp">
-          <p class="buy-l">Add to your order</p>
           <button type="button" class="buy-x" data-add="ton" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>{{ section.settings.tonopah_text | escape }}</small></div>{% if section.settings.tonopah_badge != blank %}<em class="pct">{{ section.settings.tonopah_badge | escape }}</em>{% endif %}</button>
           <button type="button" class="buy-x" data-add="beale" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB: Modern Day and Retro 1980s</b><small>The home base of the U-2, in two eras. {% if u2bsum > 0 %}{{ u2bsum | money }}{% else %}USD $44.98{% endif %} for the two sceneries.</small></div></button>
           <button type="button" class="buy-x" data-add="hub" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Miltech Mission Hub</b><small>Necessary for the 7 missions. {% if section.settings.hub_off != blank %}{{ section.settings.hub_off | escape }}{% elsif section.settings.hub != blank %}{{ section.settings.hub.price | money }}{% else %}USD $15.99{% endif %}.</small></div>{% if section.settings.hub_badge != blank %} <em class="pct">{{ section.settings.hub_badge | escape }}</em>{% endif %}</button>
@@ -1272,13 +1274,20 @@
     box.appendChild(f);
   })();
 
-  /* ---------- buy box: add-on rows are switches ---------- */
+  /* ---------- buy box: each add-on row adds its products to the cart at once ---------- */
   document.querySelectorAll('.buy-x[data-add]').forEach((b) => {
-    const sm = b.querySelector('small'), mark = b.querySelector('span'); sm.dataset.off = sm.textContent;
-    b.addEventListener('click', () => {
-      const on = b.getAttribute('aria-pressed') !== 'true';
-      b.setAttribute('aria-pressed', on); mark.textContent = on ? '\u2713' : '+';
-      sm.textContent = on ? 'It goes to the cart with the U-2.' : sm.dataset.off;
+    const sm = b.querySelector('small'), mark = b.querySelector('span'), off = sm.textContent;
+    b.addEventListener('click', async () => {
+      if (b.getAttribute('aria-busy') === 'true') return;
+      const store = typeof CART !== 'undefined' && CART.u2 && typeof window.u2CartAdd === 'function' ? CART : null;
+      let ok = true;
+      if (store) {
+        const ids = ((store.add || {})[b.dataset.add] || []).filter(Boolean);
+        b.setAttribute('aria-busy', 'true'); ok = (await window.u2CartAdd(ids)).ok; b.removeAttribute('aria-busy');
+      }
+      b.setAttribute('aria-pressed', ok); mark.textContent = ok ? '\u2713' : '+';
+      sm.textContent = ok ? 'Added to the cart.' : 'Could not add. Try again.';
+      setTimeout(() => { sm.textContent = off; if (!ok) return; b.setAttribute('aria-pressed', 'false'); mark.textContent = '+'; }, ok ? 4000 : 2600);
     });
   });
 
@@ -1286,33 +1295,34 @@
   const T0 = Date.UTC(2026, 10, 13, 14, 0, 0);
   const addCart = $('#addCart'), tminus = $('#tminus'), heroT = $('#heroT');
   /* ---------- store cart: add with the Shopify cart function, then open the cart of the theme ---------- */
-  async function addToCart(ids, btn, code) {
-    const old = btn.innerHTML;
-    btn.setAttribute('aria-busy', 'true');
+  async function cartAdd(ids, code) {
     try {
       if (code) await fetch(CART.root + 'discount/' + encodeURIComponent(code), { credentials: 'same-origin' });
       const r = await fetch(CART.root + 'cart/add.js', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: ids.map((id) => ({ id: id, quantity: 1 })) }) });
-      if (!r.ok) throw new Error('cart');
+      if (!r.ok) return { ok: false };
       document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
       const drawer = document.querySelector('cart-drawer') || document.getElementById('cart-drawer');
-      if (drawer && typeof drawer.show === 'function') {
-        setTimeout(() => drawer.show(), 400);
-        btn.textContent = 'Added to the cart'; setTimeout(() => { btn.innerHTML = old; }, 2600);
-      } else { location.href = CART.root + 'cart'; }
-    } catch (err) {
-      btn.textContent = 'Could not add. Try again.'; setTimeout(() => { btn.innerHTML = old; }, 2600);
-    } finally { btn.removeAttribute('aria-busy'); }
+      const has = !!(drawer && typeof drawer.show === 'function');
+      if (has) setTimeout(() => drawer.show(), 400);
+      return { ok: true, drawer: has };
+    } catch (err) { return { ok: false }; }
   }
-  const addRows = Array.from(document.querySelectorAll('.buy-x[data-add]'));
-  const idsOf = (b) => ((CART.add || {})[b.dataset.add] || []).filter(Boolean);
-  if (CART.u2) addRows.forEach((b) => { if (!idsOf(b).length) b.disabled = true; });
+  window.u2CartAdd = cartAdd;
+  async function addToCart(ids, btn, code) {
+    const old = btn.innerHTML;
+    btn.setAttribute('aria-busy', 'true');
+    const res = await cartAdd(ids, code);
+    btn.removeAttribute('aria-busy');
+    if (res.ok && !res.drawer) { location.href = CART.root + 'cart'; return; }
+    btn.textContent = res.ok ? 'Added to the cart' : 'Could not add. Try again.';
+    setTimeout(() => { btn.innerHTML = old; }, 2600);
+  }
+  if (CART.u2) document.querySelectorAll('.buy-x[data-add]').forEach((b) => { if (!((CART.add || {})[b.dataset.add] || []).filter(Boolean).length) b.disabled = true; });
   addCart.addEventListener('click', (e) => {
     if (addCart.getAttribute('aria-disabled') === 'true') { e.preventDefault(); return; }
     if (!CART.u2) return;                      // no store data: the link opens the product page
     e.preventDefault();
-    const ids = [CART.u2];
-    addRows.forEach((b) => { if (b.getAttribute('aria-pressed') === 'true') idsOf(b).forEach((id) => ids.push(id)); });
-    addToCart(ids, addCart);
+    addToCart([CART.u2], addCart);
   });
   function relTick() {
     const d = T0 - Date.now();
@@ -1465,6 +1475,7 @@
   const heroImg = $('#heroImg'), dims = $('#dims'), flareBg = $('#flareBg');
   const word = $('#word'), hat = $('#hat');
   let lastWord = '';
+  const flareStage = document.querySelector('.flare-stage');
   function update() {
     const y = scrollY;
     const alt = Math.max(0, altitudeAt(y + vh * 0.5));
@@ -1496,6 +1507,8 @@
     dims.style.setProperty('--draw', clamp((vh * 0.92 - dr.top) / (vh * 0.5), 0, 1).toFixed(3));
 
     // landing: mobile's callouts
+    // the landing picture stays in view while the page moves through its section (done here, so that it does not depend on the theme)
+    if (tops.mobile && flareStage) flareStage.style.transform = 'translate3d(0,' + clamp(y - tops.mobile.top, 0, Math.max(0, tops.mobile.h - flareStage.offsetHeight)).toFixed(1) + 'px,0)';
     const inFlare = tops.mobile && y + vh > tops.mobile.top && y < tops.mobile.top + tops.mobile.h;
     if (inFlare) {
       if (!reduce) flareBg.style.setProperty('--fz', (1 + clamp(1 - alt / 1500, 0, 1) * 0.12).toFixed(4));

@@ -104,33 +104,34 @@ js = js.replace("  const $ = (s) => document.querySelector(s);", "  const $ = (s
 old = "  addCart.addEventListener('click', (e) => { if (addCart.getAttribute('aria-disabled') === 'true') e.preventDefault(); });"
 assert old in js
 js = js.replace(old, r'''  /* ---------- store cart: add with the Shopify cart function, then open the cart of the theme ---------- */
-  async function addToCart(ids, btn, code) {
-    const old = btn.innerHTML;
-    btn.setAttribute('aria-busy', 'true');
+  async function cartAdd(ids, code) {
     try {
       if (code) await fetch(CART.root + 'discount/' + encodeURIComponent(code), { credentials: 'same-origin' });
       const r = await fetch(CART.root + 'cart/add.js', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: ids.map((id) => ({ id: id, quantity: 1 })) }) });
-      if (!r.ok) throw new Error('cart');
+      if (!r.ok) return { ok: false };
       document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
       const drawer = document.querySelector('cart-drawer') || document.getElementById('cart-drawer');
-      if (drawer && typeof drawer.show === 'function') {
-        setTimeout(() => drawer.show(), 400);
-        btn.textContent = 'Added to the cart'; setTimeout(() => { btn.innerHTML = old; }, 2600);
-      } else { location.href = CART.root + 'cart'; }
-    } catch (err) {
-      btn.textContent = 'Could not add. Try again.'; setTimeout(() => { btn.innerHTML = old; }, 2600);
-    } finally { btn.removeAttribute('aria-busy'); }
+      const has = !!(drawer && typeof drawer.show === 'function');
+      if (has) setTimeout(() => drawer.show(), 400);
+      return { ok: true, drawer: has };
+    } catch (err) { return { ok: false }; }
   }
-  const addRows = Array.from(document.querySelectorAll('.buy-x[data-add]'));
-  const idsOf = (b) => ((CART.add || {})[b.dataset.add] || []).filter(Boolean);
-  if (CART.u2) addRows.forEach((b) => { if (!idsOf(b).length) b.disabled = true; });
+  window.u2CartAdd = cartAdd;
+  async function addToCart(ids, btn, code) {
+    const old = btn.innerHTML;
+    btn.setAttribute('aria-busy', 'true');
+    const res = await cartAdd(ids, code);
+    btn.removeAttribute('aria-busy');
+    if (res.ok && !res.drawer) { location.href = CART.root + 'cart'; return; }
+    btn.textContent = res.ok ? 'Added to the cart' : 'Could not add. Try again.';
+    setTimeout(() => { btn.innerHTML = old; }, 2600);
+  }
+  if (CART.u2) document.querySelectorAll('.buy-x[data-add]').forEach((b) => { if (!((CART.add || {})[b.dataset.add] || []).filter(Boolean).length) b.disabled = true; });
   addCart.addEventListener('click', (e) => {
     if (addCart.getAttribute('aria-disabled') === 'true') { e.preventDefault(); return; }
     if (!CART.u2) return;                      // no store data: the link opens the product page
     e.preventDefault();
-    const ids = [CART.u2];
-    addRows.forEach((b) => { if (b.getAttribute('aria-pressed') === 'true') idsOf(b).forEach((id) => ids.push(id)); });
-    addToCart(ids, addCart);
+    addToCart([CART.u2], addCart);
   });''')
 js = js.replace("heroT.textContent = 'Out now · USD $36.99';", "heroT.textContent = 'Out now · ' + CART.price;")
 assert "CART.price" in js
