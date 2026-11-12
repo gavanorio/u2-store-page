@@ -570,7 +570,7 @@ h3 { font-size: 18px; font-weight: 700; }
 .liv-col { min-width: 0; }
 .liv-col h3 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); }
 .liv-split .liv-stage { margin-top: 12px; padding: clamp(14px, 2vw, 24px); }
-.liv-stage.art { background: rgb(178, 184, 191); }
+.liv-stage.art { background: #fff; }
 h1, h2, h3 { color: inherit; }
 button { font-family: inherit; }
 .liv-stage.art img { aspect-ratio: 930 / 340; }
@@ -578,6 +578,9 @@ button { font-family: inherit; }
 .liv-split .liv-list { margin-top: 14px; gap: 6px; }
 .liv-split .liv-list button { font-size: 13px; padding: 0 11px; min-height: 34px; }
 @media (max-width: 900px) { .liv-split { grid-template-columns: minmax(0, 1fr); } }
+.pct { display: inline-flex; align-items: center; font: 700 12px/1 var(--sans); font-style: normal; letter-spacing: .02em; background: var(--red); color: #fff; padding: 5px 9px; border-radius: 999px; white-space: nowrap; }
+.buy-p .pct { align-self: center; font-size: 13px; padding: 6px 10px; }
+.buy-x { grid-template-columns: 30px minmax(0, 1fr) auto; }
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
 .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
@@ -663,11 +666,11 @@ button { font-family: inherit; }
         <h2 class="ptitle">Miltech Simulations U-2 Spyplane for MSFS 2024</h2>
         <div class="buy">
           <span class="buy-k">Release offer</span>
-          <p class="buy-p"><b>USD $36.99</b><s>$39.99</s></p>
+          <p class="buy-p"><b>USD $36.99</b><s>$39.99</s><em class="pct">-8%</em></p>
           <p class="buy-t">The U-2S now. The U-2R and ER-2 come free when they are released.</p>
           <a class="btn btn-light btn-block" id="addCart" href="https://www.miltechsimulations.com/products/miltech-simulations-u2-spyplane" target="_blank" rel="noopener" aria-disabled="true">Available 13 Nov · 14:00Z</a>
           <p class="tminus" id="tminus">Releases 13 November 2026, 14:00Z</p>
-          <div class="buy-x"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>Add it for USD $9.99 more when you buy the U-2.</small></div></div>
+          <div class="buy-x"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>Add it for USD $9.99 more when you buy the U-2.</small></div><em class="pct">-44%</em></div>
           <p class="buy-w"><em>MiltechSimulations.com</em><em>iniBuilds store</em><em class="later">MSFS Marketplace · soon after</em></p>
         </div>
         <dl class="compat"><dt>Simulator compatibility</dt><dd>MSFS 2024: Fully compatible</dd></dl>
@@ -894,32 +897,6 @@ button { font-family: inherit; }
     </div>
   </section>
 
-  <!-- cockpit band -->
-  <section class="sec cockpit dark bleed" id="cockpit">
-    <div class="wrap">
-      <div class="cockpit-head">
-        <p class="eyebrow"><span class="fl">FL460</span>Glass cockpit</p>
-        <h2>Three screens, two keypads, one pilot.</h2>
-        <i class="mk" data-alt="46000"></i>
-        <p class="lede">Pick a page for the center MFD, or tap any screen to page it. Every screen below is a capture from the sim.</p>
-      </div>
-      <div class="panel" id="panel">
-        <img src="img/s_ov_front.webp" width="1800" height="1154" loading="lazy" alt="The U-2S main instrument panel with three large displays, a keypad and the standby gauges">
-        <button class="scr scr-l" type="button" data-pages="PERF,ICAW,INIT" aria-label="Left MFD, next page"><img width="778" height="1024" src="img/scr_mfd_perf.png" alt="Left MFD showing the PERF engine and fuel page"></button>
-        <button class="scr scr-c" type="button" data-pages="PFD,EFA,PERF,INIT,ICAW" aria-label="Center MFD, next page"><img width="778" height="1024" src="img/scr_mfd_pfd.png" alt="Center MFD showing the primary flight display"></button>
-        <button class="scr scr-r" type="button" data-pages="EFA,INIT,ICAW" aria-label="Right MFD, next page"><img width="778" height="1024" src="img/scr_mfd_efa.png" alt="Right MFD showing the electronic flight aid checklist page"></button>
-        <div class="scr scr-u"><img width="512" height="512" src="img/scr_ufcd_nav.png" alt="Up-front control display on its NAV page"></div>
-      </div>
-      <div class="pager" role="group" aria-label="Center MFD page">
-        <span class="lbl">Center MFD</span>
-        <button class="chip" type="button" data-page="PFD" aria-pressed="true">PFD</button>
-        <button class="chip" type="button" data-page="EFA" aria-pressed="false">EFA</button>
-        <button class="chip" type="button" data-page="PERF" aria-pressed="false">PERF</button>
-        <button class="chip" type="button" data-page="INIT" aria-pressed="false">INIT</button>
-        <button class="chip" type="button" data-page="ICAW" aria-pressed="false">ICAW</button>
-      </div>
-    </div>
-  </section>
 
   <!-- sensors -->
   <section class="sec" id="sensors">
@@ -990,7 +967,7 @@ button { font-family: inherit; }
       </div>
       <div class="shots"><button type="button" data-zoom="img/x_sc1.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 1"><img width="1100" height="619" src="img/x_sc1.webp" loading="lazy" alt="Scenery included with the U-2, picture 1"></button><button type="button" data-zoom="img/x_sc2.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 2"><img width="1100" height="619" src="img/x_sc2.webp" loading="lazy" alt="Scenery included with the U-2, picture 2"></button><button type="button" data-zoom="img/x_sc3.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 3"><img width="1100" height="619" src="img/x_sc3.webp" loading="lazy" alt="Scenery included with the U-2, picture 3"></button><button type="button" data-zoom="img/x_sc4.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 4"><img width="1100" height="619" src="img/x_sc4.webp" loading="lazy" alt="Scenery included with the U-2, picture 4"></button><button type="button" data-zoom="img/x_sc5.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 5"><img width="1100" height="619" src="img/x_sc5.webp" loading="lazy" alt="Scenery included with the U-2, picture 5"></button></div>
       <div class="msn-h"><h3>U-2 Spyplane Mission Pack <span>7 missions</span></h3></div>
-      <div class="needs"><b>Mission Hub required</b><p>You must have Miltech Mission Hub to fly these missions. Mission Hub is a separate Miltech product. Without it, the aircraft and the sceneries work fully, but the missions do not start.</p><a class="btn btn-dark" id="mhubAdd" data-code="" data-off="" href="https://www.miltechsimulations.com/cart/add?id=51574093578543&amp;quantity=1" target="_blank" rel="noopener"><span aria-hidden="true">+</span> Add Mission Hub to the cart · USD $15.99</a></div>
+      <div class="needs"><b>Mission Hub required</b><p>You must have Miltech Mission Hub to fly these missions. Mission Hub is a separate Miltech product. Without it, the aircraft and the sceneries work fully, but the missions do not start.</p><a class="btn btn-dark" id="mhubAdd" data-code="" data-off="" href="https://www.miltechsimulations.com/cart/add?id=51574093578543&amp;quantity=1" target="_blank" rel="noopener"><span aria-hidden="true">+</span> Add Mission Hub to the cart · USD $9.99 with the U-2 <em class="pct">-38%</em></a></div>
       <ol class="msn"><li><b>U-2 Familiarization <em>Start here</em></b><span>Your first solo, with a handling circuit and a low approach.</span><small>Groom Lake</small></li><li><b>NASA Terrain Study</b><span>Terrain lines over Monument Valley and the San Juan area.</span><small>Groom Lake</small></li><li><b>NASA Grand Canyon Survey</b><span>Three science lines along the Grand Canyon, west to east.</span><small>Palmdale</small></li><li><b>UFO Investigation, Roswell</b><span>Follow unexplained radar returns from Nevada to New Mexico.</span><small>Groom Lake</small></li><li><b>Operation Dark Skies</b><span>North Korea, 5 April 1997. Four targets, straight passes.</span><small>Osan AB</small></li><li><b>Chinese Surveillance Balloon</b><span>Two passes beside a balloon at 64,000 ft.</span><small>Patrick SFB</small></li><li><b>Iran Reconnaissance</b><span>Camera passes over Fordow, Natanz and Isfahan.</span><small>RAF Akrotiri</small></li></ol>
       <p class="small" style="margin-top:12px">The missions are loosely based on real events, or entirely fictional.</p>
     </div>
@@ -1015,7 +992,7 @@ button { font-family: inherit; }
         <div class="liv-col">
           <h3>Nose art and SPAN art</h3>
           <div class="liv-stage art">
-            <img id="artImg" src="img/art_nose_801069.webp" width="1300" height="470" loading="lazy" alt="Nose art of USAF 80-1069">
+            <img id="artImg" src="img/artw_nose_801069.webp" width="1300" height="470" loading="lazy" alt="Nose art of USAF 80-1069">
             <div class="liv-name"><b id="artName">Nose art · USAF 80-1069</b><span id="artIdx">01 / 04</span></div>
           </div>
           <div class="liv-list" id="artList" role="group" aria-label="Choose an artwork"></div>
@@ -1024,32 +1001,13 @@ button { font-family: inherit; }
     </div>
   </section>
 
-  <!-- landing -->
-  <section class="flare bleed" id="mobile">
-    <i class="mk" data-alt="1500"></i>
-    <i class="mk" data-alt="12" style="position:absolute;top:52%"></i>
-    <div class="flare-stage">
-      <img class="flare-bg" id="flareBg" src="img/shot_1.webp" width="2400" height="1153" alt="The U-2S low over a tree line with the gear down on final approach">
-      <div class="wrap flare-in">
-        <div class="flare-copy">
-          <p class="eyebrow"><span class="fl">1,500 FT</span>Mobile</p>
-          <h2>You won't land it alone.</h2>
-          <p class="lede">Real U-2 pilots are talked down by a second pilot in a chase car. Yours shows up by itself. On final, with the gear down, flaps out and below 1,500 feet, the car joins behind the threshold and calls your height in the flare. Drift off the centerline and you will hear about it.</p>
-        </div>
-        <div class="callout" aria-live="off">
-          <span class="word" id="word">On final</span>
-          <span class="hat">HEIGHT <b id="hat">1500</b> FT</span>
-        </div>
-      </div>
-    </div>
-    <i class="mk" data-alt="0" style="position:absolute;bottom:0"></i>
-  </section>
 
   <!-- two releases -->
   <section class="sec airframe bleed" id="releases">
     <div class="wrap">
       <p class="eyebrow"><span class="fl">0 FT</span>What you get</p>
       <h2 style="margin-top:16px">Two releases, one price.</h2>
+      <i class="mk" data-alt="0"></i>
       <div class="rel2">
         <article class="rc d">
           <div class="rc-im"><img width="1760" height="1120" src="img/c_4.webp" loading="lazy" alt="The U-2S on the ramp with the crew van"><span>Release 1 · 13 November</span></div>
@@ -1106,7 +1064,7 @@ button { font-family: inherit; }
     <div class="wrap final-buy">
       <div class="buy c">
         <span class="buy-k">Release offer</span>
-        <p class="buy-p"><b>USD $36.99</b><s>$39.99</s></p>
+        <p class="buy-p"><b>USD $36.99</b><s>$39.99</s><em class="pct">-8%</em></p>
         <p class="buy-t">The U-2S now. The U-2R and ER-2 come free when they are released.</p>
         <div class="buy-b">
           <a class="btn btn-light" href="#product">Get the U-2</a>
@@ -1281,7 +1239,7 @@ button { font-family: inherit; }
     ['USAF-801096', 'USAF 80-1096'], ['USAF-6810329', 'USAF 68-10329'], ['USAF-6810331', 'USAF 68-10331'], ['USAF-6810337', 'USAF 68-10337'],
     ['9RW-6810331', '9RW 68-10331'], ['UN-801069', 'UN 80-1069']
   ];
-  const ART = [['art_nose_801069', 'Nose art · USAF 80-1069', 'Nose art of USAF 80-1069'], ['art_nose_801077', 'Nose art · USAF 80-1077', 'Nose art of USAF 80-1077'], ['art_nose_801094', 'Nose art · USAF 80-1094', 'Nose art of USAF 80-1094'], ['art_span_801077', 'SPAN art · USAF 80-1077', 'Artwork on the SPAN antenna fairing of USAF 80-1077']];
+  const ART = [['artw_nose_801069', 'Nose art · USAF 80-1069', 'Nose art of USAF 80-1069'], ['artw_nose_801077', 'Nose art · USAF 80-1077', 'Nose art of USAF 80-1077'], ['artw_nose_801094', 'Nose art · USAF 80-1094', 'Nose art of USAF 80-1094'], ['artw_span_801077', 'SPAN art · USAF 80-1077', 'Artwork on the SPAN antenna fairing of USAF 80-1077']];
   const artList = $('#artList'), artImg = $('#artImg'), artName = $('#artName'), artIdx = $('#artIdx');
   ART.forEach(([f, name, alt], i) => {
     const b = document.createElement('button');
@@ -1367,7 +1325,7 @@ button { font-family: inherit; }
       .map((el) => ({ y: el.getBoundingClientRect().top + scrollY, alt: +el.dataset.alt }))
       .sort((a, b) => a.y - b.y);
     for (const id of ['mobile']) {
-      const el = document.getElementById(id), r = el.getBoundingClientRect();
+      const el = document.getElementById(id); if (!el) continue; const r = el.getBoundingClientRect();
       tops[id] = { top: r.top + scrollY, h: el.offsetHeight };
     }
     update();
@@ -1413,7 +1371,7 @@ button { font-family: inherit; }
     dims.style.setProperty('--draw', clamp((vh * 0.92 - dr.top) / (vh * 0.5), 0, 1).toFixed(3));
 
     // landing: mobile's callouts
-    const inFlare = y + vh > tops.mobile.top && y < tops.mobile.top + tops.mobile.h;
+    const inFlare = tops.mobile && y + vh > tops.mobile.top && y < tops.mobile.top + tops.mobile.h;
     if (inFlare) {
       if (!reduce) flareBg.style.setProperty('--fz', (1 + clamp(1 - alt / 1500, 0, 1) * 0.12).toFixed(4));
       hat.textContent = Math.round(Math.min(alt, 1500));
@@ -1466,7 +1424,7 @@ button { font-family: inherit; }
         document.querySelectorAll('.scr').forEach((s, k) => setTimeout(() => { s.classList.remove('boot'); void s.offsetWidth; s.classList.add('boot'); }, k * 180));
       }
     }, { threshold: 0.45 });
-    io.observe($('#panel'));
+    if ($('#panel')) io.observe($('#panel'));
   }
 
   /* ---------- Mission Hub button: put the Shopify discount code in data-code and the text of the saving in data-off (for example "20% off") ---------- */
