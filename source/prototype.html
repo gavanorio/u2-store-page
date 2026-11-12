@@ -1194,34 +1194,31 @@ button { font-family: inherit; }
   (() => {
     const box = $('#heroVid'); if (!box || reduce || !box.dataset.yt) return;
     const id = box.dataset.yt, t0 = +box.dataset.start || 0, t1 = +box.dataset.end || 0;
-    const holder = document.createElement('div'); box.appendChild(holder);
+    const f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + id + '&start=' + t0 + '&playsinline=1&rel=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin);
+    f.allow = 'autoplay; encrypted-media'; f.title = 'U-2 Spyplane video'; f.tabIndex = -1;
     box.classList.add('on');                                  // black screen while the video loads
-    let playing = false, pl = null;
-    const giveUp = setTimeout(() => { if (!playing) box.classList.remove('on'); }, 12000);   // no video: show the picture
-    const make = () => {
-      pl = new YT.Player(holder, {
-        host: 'https://www.youtube-nocookie.com', videoId: id, width: '100%', height: '100%',
-        playerVars: { autoplay: 1, mute: 1, controls: 0, start: t0, playsinline: 1, rel: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1 },
-        events: {
-          onReady: (e) => { e.target.mute(); e.target.setVolume(0); e.target.playVideo(); },
-          onStateChange: (e) => {
-            if (e.data === 1 && !playing) { playing = true; clearTimeout(giveUp); box.classList.add('on'); setTimeout(() => box.classList.add('play'), 500); }
-            if (e.data === 0) { e.target.seekTo(t0, true); e.target.playVideo(); }
-          }
-        }
-      });
-      setInterval(() => {
-        if (!pl || !pl.getCurrentTime) return;
-        if (pl.isMuted && !pl.isMuted()) pl.mute();
-        if (t1 && pl.getCurrentTime() >= t1 - 0.3) pl.seekTo(t0, true);
-      }, 300);
-    };
-    if (window.YT && window.YT.Player) make();
-    else {
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => { if (typeof prev === 'function') prev(); make(); };
-      const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; sc.async = true; document.head.appendChild(sc);
-    }
+    const cmd = (func, args) => { try { f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*'); } catch (e) {} };
+    const back = () => { cmd('seekTo', [t0, true]); cmd('playVideo'); };
+    let heard = false, shownAt = 0;
+    addEventListener('message', (e) => {
+      if (e.source !== f.contentWindow) return;
+      let d; try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
+      if (!d || !d.info) return;
+      heard = true;
+      if (d.info.muted === false) cmd('mute');
+      if (d.info.playerState === 0) back();
+      if (t1 && typeof d.info.currentTime === 'number' && d.info.currentTime >= t1 - 0.3) back();
+    });
+    f.addEventListener('load', () => {
+      const hello = setInterval(() => { if (heard) return clearInterval(hello); try { f.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {} }, 500);
+      setTimeout(() => clearInterval(hello), 15000);
+      cmd('mute');
+      setTimeout(() => { box.classList.add('play'); shownAt = Date.now(); }, 1800);
+      // if the player sends no time data, repeat by the clock
+      if (t1 > t0) setInterval(() => { if (!heard && shownAt && Date.now() - shownAt >= (t1 - t0) * 1000) { back(); shownAt = Date.now(); } }, 1000);
+    });
+    box.appendChild(f);
   })();
 
   /* ---------- release state: 13 Nov 2026, 14:00Z ---------- */
