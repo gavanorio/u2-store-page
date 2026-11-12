@@ -586,6 +586,19 @@
 .u2p .hero-vid.on { opacity: 1; }
 .u2p .hero-vid iframe { position: absolute; top: 50%; left: 50%; border: 0; width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw); transform: translate(-50%, -50%) scale(1.36); opacity: 0; transition: opacity .9s; }
 .u2p .hero-vid.play iframe { opacity: 1; }
+.u2p .lockup { display: inline-grid; justify-self: start; width: max-content; max-width: 100%; font-size: clamp(108px, 17vw, 270px); --inkL: .07em; --inkR: .05em; }
+.u2p .lockup .hero-title { display: grid; line-height: .82; font-size: 1em; margin: 0; }
+.u2p .lockup .hero-title .big { font-size: 1em; }
+.u2p .lockup .hero-title .sub { display: flex; justify-content: space-between; width: 0; min-width: 100%; font-size: .165em; font-weight: 600; letter-spacing: 0; line-height: 1; margin-top: .42em; padding: 0 var(--inkR) 0 var(--inkL); animation: u2p-rise 1.5s cubic-bezier(.2, .7, .1, 1) both; }
+.u2p .lockup .hero-title .sub i { font-style: normal; }
+.u2p .lockup .lk-logo { display: block; width: 0; min-width: 100%; height: auto; padding: 0 var(--inkR) 0 var(--inkL); margin-bottom: .1em; }
+.u2p .lockup .kicker { width: 0; min-width: 100%; margin-top: .09em; padding: 0 var(--inkR) 0 var(--inkL); font-size: max(10.5px, .05em); font-weight: 600; letter-spacing: .12em; line-height: 1.5; text-align: justify; text-align-last: justify; color: rgba(255, 255, 255, .9); }
+.u2p .hero [hidden] { display: none; }
+@media (max-width: 760px) {
+.u2p .lockup { font-size: clamp(108px, 38vw, 210px); }
+.u2p .lockup .kicker { font-size: max(8.5px, .058em); letter-spacing: .03em; }
+}
+.u2p .lockup .kicker { white-space: nowrap; }
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
@@ -625,14 +638,12 @@
     <div class="hero-vid" id="heroVid" data-yt="r-K6oqHTbV0" data-start="7" data-end="149" aria-hidden="true"></div>
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="wrap hero-in">
-      <p class="kicker">For Microsoft Flight Simulator 2024</p>
-      <h1 class="hero-title"><span class="big">U-2</span><span class="sub">Spyplane</span></h1>
-      <p class="hero-tag">Some call it the hardest aircraft in the world to fly. Now it is time to test your skills.</p>
-      <p class="rel-chip"><span>Release</span><b>13 Nov · 14:00Z</b><i id="heroT">Release offer {{ product.price | money }}</i></p>
-      <div class="cta">
-        <a class="btn btn-light" href="#product">See the release offer</a>
-        <a class="btn btn-line" href="#history">Start with the story</a>
+      <div class="lockup">
+        <img class="lk-logo" src="{{ u2base }}miltech_logo.png" width="500" height="73" alt="Miltech Simulations">
+        <h1 class="hero-title"><span class="big">U-2</span><span class="sub" aria-label="Spyplane"><i>S</i><i>P</i><i>Y</i><i>P</i><i>L</i><i>A</i><i>N</i><i>E</i></span></h1>
+        <p class="kicker">For Microsoft Flight Simulator 2024</p>
       </div>
+      <i id="heroT" hidden></i>
     </div>
     <div class="hero-facts">
       <dl class="wrap facts-row">
@@ -1163,6 +1174,27 @@
   lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
   lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') lbShow(cur - 1); if (e.key === 'ArrowRight') lbShow(cur + 1); });
 
+  /* ---------- hero title: the logo, SPYPLANE and the simulator line get the same width as the ink of "U-2" ---------- */
+  (() => {
+    const lock = $('.lockup'), big = $('.lockup .big'), sub = $('.lockup .sub'); if (!lock || !big || !sub) return;
+    const fit = () => {
+      try {
+        const c = document.createElement('canvas').getContext('2d');
+        const bs = getComputedStyle(big), ss = getComputedStyle(sub);
+        c.font = bs.fontWeight + ' ' + bs.fontSize + ' ' + bs.fontFamily;
+        const m = c.measureText('U-2'), ls = parseFloat(bs.letterSpacing) || 0;
+        const inkL = -m.actualBoundingBoxLeft, inkR = big.getBoundingClientRect().width - (m.actualBoundingBoxRight + 2 * ls);
+        c.font = ss.fontWeight + ' ' + ss.fontSize + ' ' + ss.fontFamily;
+        const s1 = c.measureText('S'), e1 = c.measureText('E');
+        sub.style.paddingLeft = Math.max(0, inkL + s1.actualBoundingBoxLeft) + 'px';
+        sub.style.paddingRight = Math.max(0, inkR - (e1.width - e1.actualBoundingBoxRight)) + 'px';
+        lock.style.setProperty('--inkL', Math.max(0, inkL) + 'px'); lock.style.setProperty('--inkR', Math.max(0, inkR) + 'px');
+      } catch (e) {}
+    };
+    fit(); addEventListener('resize', fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  })();
+
   /* ---------- hero video: muted YouTube segment that repeats, behind the vignette. Black while it loads; the picture is the fallback ---------- */
   (() => {
     const box = $('#heroVid'); if (!box || reduce || !box.dataset.yt) return;
@@ -1173,13 +1205,15 @@
     box.classList.add('on');                                  // black screen while the video loads
     const cmd = (func, args) => { try { f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*'); } catch (e) {} };
     const back = () => { cmd('seekTo', [t0, true]); cmd('playVideo'); };
-    let heard = false, shownAt = 0;
+    let heard = false, shownAt = 0, pending = false;
+    const show = () => { if (shownAt) return; box.classList.add('play'); shownAt = Date.now(); };
     addEventListener('message', (e) => {
       if (e.source !== f.contentWindow) return;
       let d; try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
       if (!d || !d.info) return;
       heard = true;
       if (d.info.muted === false) cmd('mute');
+      if (d.info.playerState === 1 && !shownAt && !pending) { pending = true; setTimeout(show, 1600); }   // playing: wait until the YouTube icon is gone
       if (d.info.playerState === 0) back();
       if (t1 && typeof d.info.currentTime === 'number' && d.info.currentTime >= t1 - 0.3) back();
     });
@@ -1187,7 +1221,7 @@
       const hello = setInterval(() => { if (heard) return clearInterval(hello); try { f.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {} }, 500);
       setTimeout(() => clearInterval(hello), 15000);
       cmd('mute');
-      setTimeout(() => { box.classList.add('play'); shownAt = Date.now(); }, 1800);
+      setTimeout(() => { if (!shownAt) show(); }, 5000);          // no state data from the player: show it after 5 s
       // if the player sends no time data, repeat by the clock
       if (t1 > t0) setInterval(() => { if (!heard && shownAt && Date.now() - shownAt >= (t1 - t0) * 1000) { back(); shownAt = Date.now(); } }, 1000);
     });
