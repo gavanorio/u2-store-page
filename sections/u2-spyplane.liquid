@@ -627,6 +627,8 @@
 .u2p .buy-x[aria-pressed="true"] { border-color: var(--mfd); background: rgba(67, 211, 111, .1); }
 .u2p .buy-x:disabled { opacity: .5; cursor: default; }
 .u2p .buy-x small { display: block; line-height: 1.4; }
+.u2p .buy-x small s { color: rgba(255,255,255,.5); margin-right: 4px; }
+.u2p .buy-x small strong { color: #fff; font-weight: 600; }
 .u2p .flare { background: transparent; }
 .u2p .flare-stage { position: relative; top: auto; will-change: transform; }
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
@@ -707,9 +709,10 @@
           <a class="btn btn-light btn-block" id="addCart" href="https://www.miltechsimulations.com/products/miltech-simulations-u2-spyplane" target="_blank" rel="noopener" aria-disabled="true">Available 13 Nov · 14:00Z</a>
           <p class="tminus" id="tminus">Releases 13 November 2026, 14:00Z</p>
           <hr class="buy-sp">
-          <button type="button" class="buy-x" data-add="ton" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>{{ section.settings.tonopah_text | escape }}</small></div>{% if section.settings.tonopah_badge != blank %}<em class="pct">{{ section.settings.tonopah_badge | escape }}</em>{% endif %}</button>
-          <button type="button" class="buy-x" data-add="beale" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB: Modern Day and Retro 1980s</b><small>The home base of the U-2, in two eras. {% if u2bsum > 0 %}{{ u2bsum | money }}{% else %}USD $44.98{% endif %} for the two sceneries.</small></div></button>
-          <button type="button" class="buy-x" data-add="hub" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Miltech Mission Hub</b><small>Necessary for the 7 missions. {% if section.settings.hub_off != blank %}{{ section.settings.hub_off | escape }}{% elsif section.settings.hub != blank %}{{ section.settings.hub.price | money }}{% else %}USD $15.99{% endif %}.</small></div>{% if section.settings.hub_badge != blank %} <em class="pct">{{ section.settings.hub_badge | escape }}</em>{% endif %}</button>
+          <button type="button" class="buy-x" data-add="ton" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small><s>{{ section.settings.tonopah.price | money }}</s> <strong>{{ section.settings.tonopah_text | escape }}</strong></small></div>{% if section.settings.tonopah_badge != blank %}<em class="pct">{{ section.settings.tonopah_badge | escape }}</em>{% endif %}</button>
+          <button type="button" class="buy-x" data-add="bealem" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB · Modern Day</b><small><s>{{ section.settings.beale_a.price | money }}</s> <strong>{{ section.settings.beale_a_text | escape }}</strong></small></div>{% if section.settings.beale_a_badge != blank %}<em class="pct">{{ section.settings.beale_a_badge | escape }}</em>{% endif %}</button>
+          <button type="button" class="buy-x" data-add="bealer" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB · Retro 1980s</b><small><s>{{ section.settings.beale_b.price | money }}</s> <strong>{{ section.settings.beale_b_text | escape }}</strong></small></div>{% if section.settings.beale_b_badge != blank %}<em class="pct">{{ section.settings.beale_b_badge | escape }}</em>{% endif %}</button>
+          <button type="button" class="buy-x" data-add="hub" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Miltech Mission Hub</b><small><s>{{ section.settings.hub.price | money }}</s> <strong>{{ section.settings.hub_off | escape }}</strong></small></div>{% if section.settings.hub_badge != blank %}<em class="pct">{{ section.settings.hub_badge | escape }}</em>{% endif %}</button>
         </div>
         <div class="pair">
           <dl class="compat"><dt>Simulator compatibility</dt><dd>MSFS 2024: Fully compatible</dd><dd class="no">MSFS 2020: Not compatible</dd></dl>
@@ -1141,7 +1144,7 @@
   root.classList.add('js');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s) => document.querySelector(s);
-  const IMG = {{ u2base | json }}, CART = { root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], beale: [{{ u2ba | default: "null" }}, {{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, price: {{ product.price | money | strip_html | json }} };
+  const IMG = {{ u2base | json }}, CART = { root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], bealem: [{{ u2ba | default: "null" }}], bealer: [{{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, price: {{ product.price | money | strip_html | json }} };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   let vh = innerHeight, vw = innerWidth;
 
@@ -1276,7 +1279,7 @@
 
   /* ---------- buy box: each add-on row adds its products to the cart at once ---------- */
   document.querySelectorAll('.buy-x[data-add]').forEach((b) => {
-    const sm = b.querySelector('small'), mark = b.querySelector('span'), off = sm.textContent;
+    const sm = b.querySelector('small'), mark = b.querySelector('span'), off = sm.innerHTML;
     b.addEventListener('click', async () => {
       if (b.getAttribute('aria-busy') === 'true') return;
       const store = typeof CART !== 'undefined' && CART.u2 && typeof window.u2CartAdd === 'function' ? CART : null;
@@ -1287,7 +1290,7 @@
       }
       b.setAttribute('aria-pressed', ok); mark.textContent = ok ? '\u2713' : '+';
       sm.textContent = ok ? 'Added to the cart.' : 'Could not add. Try again.';
-      setTimeout(() => { sm.textContent = off; if (!ok) return; b.setAttribute('aria-pressed', 'false'); mark.textContent = '+'; }, ok ? 4000 : 2600);
+      setTimeout(() => { sm.innerHTML = off; if (!ok) return; b.setAttribute('aria-pressed', 'false'); mark.textContent = '+'; }, ok ? 4000 : 2600);
     });
   });
 
@@ -1600,10 +1603,14 @@
   "tag": "section",
   "settings": [
     { "type": "product", "id": "tonopah", "label": "Tonopah product (the add-on in the buy box)" },
-    { "type": "text", "id": "tonopah_text", "label": "Tonopah offer text", "default": "Add it for USD $9.99 more when you buy the U-2." },
+    { "type": "text", "id": "tonopah_text", "label": "Tonopah offer text", "default": "USD $9.99 with the U-2" },
     { "type": "text", "id": "tonopah_badge", "label": "Tonopah red bubble", "default": "-44%" },
     { "type": "product", "id": "beale_a", "label": "Beale product 1 (Modern Day)" },
+    { "type": "text", "id": "beale_a_text", "label": "Beale Modern Day offer text", "default": "USD $15.99 with the U-2" },
+    { "type": "text", "id": "beale_a_badge", "label": "Beale Modern Day red bubble", "default": "-30%" },
     { "type": "product", "id": "beale_b", "label": "Beale product 2 (Retro 1980s)" },
+    { "type": "text", "id": "beale_b_text", "label": "Beale Retro 1980s offer text", "default": "USD $15.99 with the U-2" },
+    { "type": "text", "id": "beale_b_badge", "label": "Beale Retro 1980s red bubble", "default": "-27%" },
     { "type": "product", "id": "hub", "label": "Mission Hub product" },
     { "type": "text", "id": "hub_badge", "label": "Mission Hub red bubble", "default": "-38%" },
     { "type": "text", "id": "hub_code", "label": "Mission Hub discount code", "info": "Leave empty if you use an automatic discount or no discount." },

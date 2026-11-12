@@ -11,7 +11,11 @@
         "hub_off": "USD $9.99 with the U-2",
         "tonopah_badge": "-44%",
         "hub_badge": "-38%",
-        "tonopah_text": "Add it for USD $9.99 more when you buy the U-2."
+        "tonopah_text": "USD $9.99 with the U-2",
+        "beale_a_text": "USD $15.99 with the U-2",
+        "beale_a_badge": "-30%",
+        "beale_b_text": "USD $15.99 with the U-2",
+        "beale_b_badge": "-27%"
       }
     }
   },
