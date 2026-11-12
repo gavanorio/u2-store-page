@@ -83,9 +83,9 @@ assert body.count('<b>USD $36.99</b><s>$39.99</s><em class="pct">-8%</em>') == 2
 body = body.replace('<b>USD $36.99</b><s>$39.99</s><em class="pct">-8%</em>', '<b>@@PRICE@@</b>@@CMP@@')
 body = body.replace('Release offer USD $36.99', 'Release offer @@PRICE@@')
 for KEY in ('ton', 'bealem', 'bealer', 'hub'):
-    body, n = re.subn(r'(<button[^>]*data-add="' + KEY + r'".*?<small>).*?(</small></div>).*?(</button>)', r'\1<s>@@REG_' + KEY + r'@@</s> <strong>@@DEAL_' + KEY + r'@@</strong>\2@@BADGE_' + KEY + r'@@\3', body, count=1, flags=re.S)
+    body, n = re.subn(r'(<button[^>]*data-add="' + KEY + r'".*?<small>).*?(</small></div>).*?(</button>)', r'\1<strong>@@DEAL_' + KEY + r'@@</strong>\2@@BADGE_' + KEY + r'@@\3', body, count=1, flags=re.S)
     assert n == 1, KEY
-H = 'Add Mission Hub to the cart · USD $9.99 with the U-2 <em class="pct">-38%</em>'
+H = 'Add Mission Hub to the cart · USD $9.99 <em class="pct">-38%</em>'
 assert H in body
 body = body.replace(H, 'Add Mission Hub to the cart · @@HUBPRICE@@@@HUBBADGE@@')
 body = re.sub(r'id="mhubAdd" data-code="" data-off=""', 'id="mhubAdd" data-code="@@HUBCODE@@" data-off="@@HUBOFF@@"', body)
@@ -171,18 +171,18 @@ SCHEMA = '''
   "tag": "section",
   "settings": [
     { "type": "product", "id": "tonopah", "label": "Tonopah product (the add-on in the buy box)" },
-    { "type": "text", "id": "tonopah_text", "label": "Tonopah offer text", "default": "USD $9.99 with the U-2" },
+    { "type": "text", "id": "tonopah_text", "label": "Tonopah offer text", "default": "USD $9.99" },
     { "type": "text", "id": "tonopah_badge", "label": "Tonopah red bubble", "default": "-44%" },
     { "type": "product", "id": "beale_a", "label": "Beale product 1 (Modern Day)" },
-    { "type": "text", "id": "beale_a_text", "label": "Beale Modern Day offer text", "default": "USD $15.99 with the U-2" },
+    { "type": "text", "id": "beale_a_text", "label": "Beale Modern Day offer text", "default": "USD $15.99" },
     { "type": "text", "id": "beale_a_badge", "label": "Beale Modern Day red bubble", "default": "-30%" },
     { "type": "product", "id": "beale_b", "label": "Beale product 2 (Retro 1980s)" },
-    { "type": "text", "id": "beale_b_text", "label": "Beale Retro 1980s offer text", "default": "USD $15.99 with the U-2" },
+    { "type": "text", "id": "beale_b_text", "label": "Beale Retro 1980s offer text", "default": "USD $15.99" },
     { "type": "text", "id": "beale_b_badge", "label": "Beale Retro 1980s red bubble", "default": "-27%" },
     { "type": "product", "id": "hub", "label": "Mission Hub product" },
     { "type": "text", "id": "hub_badge", "label": "Mission Hub red bubble", "default": "-38%" },
     { "type": "text", "id": "hub_code", "label": "Mission Hub discount code", "info": "Leave empty if you use an automatic discount or no discount." },
-    { "type": "text", "id": "hub_off", "label": "Mission Hub price text on the button", "info": "Example: USD $9.99 with the U-2. Leave empty to show the product price." }
+    { "type": "text", "id": "hub_off", "label": "Mission Hub price text on the button", "info": "Example: USD $9.99. Leave empty to show the product price." }
   ],
   "presets": [{ "name": "U-2 Spyplane page" }]
 }
@@ -221,7 +221,7 @@ shutil.rmtree(OUT, ignore_errors=True)
 for d in ('sections', 'templates', 'files'): os.makedirs(f'{OUT}/{d}')
 open(f'{OUT}/sections/u2-spyplane.liquid', 'w', encoding='utf-8').write(liquid)
 json.dump({'sections': {'main': {'type': 'u2-spyplane', 'settings': {
-    'tonopah': 'kbab-beale-air-force-base-retro-1980s-for-msfs2024-copy', 'hub': 'miltech-mission-hub', 'beale_a': 'blackbird-simulations-kbab-beale-air-force-base', 'beale_b': 'blackbird-simulations-kbab-beale-air-force-base-retro-1960s-for-msfs2024', 'hub_code': '', 'hub_off': 'USD $9.99 with the U-2', 'tonopah_badge': '-44%', 'hub_badge': '-38%', 'tonopah_text': 'USD $9.99 with the U-2', 'beale_a_text': 'USD $15.99 with the U-2', 'beale_a_badge': '-30%', 'beale_b_text': 'USD $15.99 with the U-2', 'beale_b_badge': '-27%'}}}, 'order': ['main']},
+    'tonopah': 'kbab-beale-air-force-base-retro-1980s-for-msfs2024-copy', 'hub': 'miltech-mission-hub', 'beale_a': 'blackbird-simulations-kbab-beale-air-force-base', 'beale_b': 'blackbird-simulations-kbab-beale-air-force-base-retro-1960s-for-msfs2024', 'hub_code': '', 'hub_off': 'USD $9.99', 'tonopah_badge': '-44%', 'hub_badge': '-38%', 'tonopah_text': 'USD $9.99', 'beale_a_text': 'USD $15.99', 'beale_a_badge': '-30%', 'beale_b_text': 'USD $15.99', 'beale_b_badge': '-27%'}}}, 'order': ['main']},
     open(f'{OUT}/templates/product.u2-spyplane.json', 'w'), indent=2)
 
 # pictures: only the files that the page uses, with flat names
@@ -240,7 +240,7 @@ print('liquid KB', len(liquid.encode()) // 1024, 'pictures', len(names), 'missin
 # local test page (no Liquid): the same markup with fixed values
 shutil.rmtree(TEST, ignore_errors=True); os.makedirs(TEST + '/img')
 for f in os.listdir(f'{OUT}/files'): shutil.copy(f'{OUT}/files/{f}', f'{TEST}/img/{f}')
-test = render(page, {'@@BASE@@': 'img/u2s_', '@@PRICE@@': '$36.99', '@@CMP@@': '<s>$39.99</s><em class="pct">-8%</em>', '@@TONBADGE@@': '<em class="pct">-44%</em>', '@@HUBBADGE@@': ' <em class="pct">-38%</em>', '@@PURL@@': '#', '@@REG_ton@@': '$17.99', '@@DEAL_ton@@': 'USD $9.99 with the U-2', '@@BADGE_ton@@': '<em class="pct">-44%</em>', '@@REG_bealem@@': '$22.99', '@@DEAL_bealem@@': 'USD $15.99 with the U-2', '@@BADGE_bealem@@': '<em class="pct">-30%</em>', '@@REG_bealer@@': '$21.99', '@@DEAL_bealer@@': 'USD $15.99 with the U-2', '@@BADGE_bealer@@': '<em class="pct">-27%</em>', '@@REG_hub@@': '$15.99', '@@DEAL_hub@@': 'USD $9.99 with the U-2', '@@BADGE_hub@@': '<em class="pct">-38%</em>', '@@BEALEPRICE@@': 'USD $44.98', '@@TONTEXT@@': 'Add it for USD $9.99 more when you buy the U-2.', '@@HUBPRICE@@': 'USD $15.99', '@@HUBCODE@@': '', '@@HUBOFF@@': '',
+test = render(page, {'@@BASE@@': 'img/u2s_', '@@PRICE@@': '$36.99', '@@CMP@@': '<s>$39.99</s><em class="pct">-8%</em>', '@@TONBADGE@@': '<em class="pct">-44%</em>', '@@HUBBADGE@@': ' <em class="pct">-38%</em>', '@@PURL@@': '#', '@@REG_ton@@': '$17.99', '@@DEAL_ton@@': 'USD $9.99', '@@BADGE_ton@@': '<em class="pct">-44%</em>', '@@REG_bealem@@': '$22.99', '@@DEAL_bealem@@': 'USD $15.99', '@@BADGE_bealem@@': '<em class="pct">-30%</em>', '@@REG_bealer@@': '$21.99', '@@DEAL_bealer@@': 'USD $15.99', '@@BADGE_bealer@@': '<em class="pct">-27%</em>', '@@REG_hub@@': '$15.99', '@@DEAL_hub@@': 'USD $9.99', '@@BADGE_hub@@': '<em class="pct">-38%</em>', '@@BEALEPRICE@@': 'USD $44.98', '@@TONTEXT@@': 'Add it for USD $9.99 more when you buy the U-2.', '@@HUBPRICE@@': 'USD $15.99', '@@HUBCODE@@': '', '@@HUBOFF@@': '',
                      '@@IMGJS@@': '"img/u2s_"', '@@CARTJS@@': '{ root: "/", u2: null, ton: null, hub: null, add: {}, price: "$36.99" }'})
 theme = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:Georgia,serif;color:#900} h2{font-size:80px;color:green} p{margin:2em} .btn{background:pink!important} button{border:4px solid red}</style></head><body><header style="position:sticky;top:0;z-index:50;height:64px;background:#fff;border-bottom:1px solid #ccc">THEME HEADER</header><main>'
 open(TEST + '/index.html', 'w', encoding='utf-8').write(theme + test + '</main><footer style="padding:40px">THEME FOOTER</footer></body></html>')
