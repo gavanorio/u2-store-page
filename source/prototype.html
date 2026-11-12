@@ -638,6 +638,38 @@ button { font-family: inherit; }
 .flare-vid { z-index: 0; }
 .flare-vid iframe { transform: translate(-50%, -50%) scale(1.36); }
 .hero-vid video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+/* ---------- phone polish ---------- */
+@media (max-width: 760px) {
+  .lockup { font-size: clamp(120px, 45vw, 250px); }
+  .lockup .kicker { font-size: max(9.5px, .056em); letter-spacing: .04em; }
+  .hero { min-height: 600px; }
+  .hero-in { padding-top: 84px; padding-bottom: 190px; }
+  .hero-facts .facts-row { gap: 12px 22px; padding-block: 16px 22px; }
+  .facts-row dd { font-size: 19px; }
+  .sec { padding-block: 52px; }
+  .product { padding-block: 28px 44px; }
+  .chapter { height: clamp(360px, 58vh, 540px); }
+  .tabs { flex-wrap: nowrap; overflow-x: auto; margin-right: calc(var(--gut-r) * -1); padding-right: var(--gut-r); padding-bottom: 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: 0 0 auto; white-space: nowrap; }
+  .panel-f { padding-top: 24px; gap: 22px; }
+  .panel-f li { font-size: 15.5px; }
+  .needs .btn { width: 100%; text-align: center; white-space: normal; line-height: 1.25; min-height: 48px; padding-block: 8px; }
+  .buy { padding: 18px; }
+  .buy-x { padding: 11px 12px; gap: 10px; }
+  .buy-x b { font-size: 14.5px; line-height: 1.25; }
+  .buy-b { width: 100%; } .buy-b .btn { flex: 1 1 100%; }
+  .buy.c { padding: 22px 18px; }
+  .thumbs { gap: 6px; }
+  .liv-split .liv-list button { font-size: 12.5px; padding: 0 9px; min-height: 32px; }
+  .walk { gap: 22px; }
+  .msn li { padding: 12px 0; }
+  .flare-stage { min-height: 620px; }
+  .flare-in { padding-bottom: 36px; gap: 18px; align-items: end; }
+  .callout { align-self: end; }
+  .final { padding-top: 56px; }
+  .final-buy { padding-bottom: 48px; }
+}
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
 .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
@@ -1375,7 +1407,7 @@ button { font-family: inherit; }
       let ok = true;
       if (store) {
         const ids = ((store.add || {})[b.dataset.add] || []).filter(Boolean);
-        b.setAttribute('aria-busy', 'true'); ok = (await window.u2CartAdd(ids)).ok; b.removeAttribute('aria-busy');
+        b.setAttribute('aria-busy', 'true'); ok = (await window.u2CartAdd(ids, (store.codes || {})[b.dataset.add])).ok; b.removeAttribute('aria-busy');
       }
       b.setAttribute('aria-pressed', ok); mark.textContent = ok ? '\u2713' : '+';
       sm.textContent = ok ? 'Added to the cart.' : 'Could not add. Try again.';

@@ -98,11 +98,25 @@ js = js.replace("  const $ = (s) => document.querySelector(s);", "  const $ = (s
 old = "  addCart.addEventListener('click', (e) => { if (addCart.getAttribute('aria-disabled') === 'true') e.preventDefault(); });"
 assert old in js
 js = js.replace(old, r'''  /* ---------- store cart: add with the Shopify cart function, then open the cart of the theme ---------- */
-  async function cartAdd(ids, code) {
+  async function applyCodes(codes) {                           // add the offer codes to the codes that the cart has already
+    codes = (Array.isArray(codes) ? codes : [codes]).filter(Boolean); if (!codes.length) return;
+    const same = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
+    const opt = { credentials: 'same-origin', headers: { 'Content-Type': 'application/json', Accept: 'application/json' } };
     try {
-      if (code) await fetch(CART.root + 'discount/' + encodeURIComponent(code), { credentials: 'same-origin' });
+      const cart = await (await fetch(CART.root + 'cart.js', opt)).json();
+      const all = (cart.discount_codes || []).map((c) => c.code);
+      codes.forEach((c) => { if (!all.some((x) => same(x, c))) all.push(c); });
+      const r = await fetch(CART.root + 'cart/update.js', Object.assign({ method: 'POST', body: JSON.stringify({ discount: all.join(',') }) }, opt));
+      const out = r.ok ? await r.json() : null;
+      const ok = out && (out.discount_codes || []).some((c) => codes.some((x) => same(x, c.code)));
+      if (!ok) await fetch(CART.root + 'discount/' + encodeURIComponent(codes[codes.length - 1]), { credentials: 'same-origin' });   // older method: one code, used at the checkout
+    } catch (err) {}
+  }
+  async function cartAdd(ids, codes) {
+    try {
       const r = await fetch(CART.root + 'cart/add.js', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: ids.map((id) => ({ id: id, quantity: 1 })) }) });
       if (!r.ok) return { ok: false };
+      await applyCodes(codes);
       document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
       const drawer = document.querySelector('cart-drawer') || document.getElementById('cart-drawer');
       const has = !!(drawer && typeof drawer.show === 'function');
@@ -137,7 +151,6 @@ js = js[:a] + r'''  /* ---------- Mission Hub button: the discount code and its 
     const code = a.dataset.code, off = a.dataset.off;
     if (code) {
       a.href = 'https://www.miltechsimulations.com/discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent('/cart/add?id=51574093578543&quantity=1');
-      a.innerHTML = '<span aria-hidden="true">+</span> Add Mission Hub to the cart' + (off ? ' · ' + off : ' at a discount');
     }
     if (CART.hub) a.addEventListener('click', (e) => { e.preventDefault(); addToCart([CART.hub], a, code); });
   })();
@@ -181,7 +194,10 @@ SCHEMA = '''
     { "type": "text", "id": "beale_b_badge", "label": "Beale Retro 1980s red bubble", "default": "-27%" },
     { "type": "product", "id": "hub", "label": "Mission Hub product" },
     { "type": "text", "id": "hub_badge", "label": "Mission Hub red bubble", "default": "-38%" },
-    { "type": "text", "id": "hub_code", "label": "Mission Hub discount code", "info": "Leave empty if you use an automatic discount or no discount." },
+    { "type": "text", "id": "hub_code", "label": "Mission Hub discount code", "info": "The page adds this code to the cart with the product." },
+    { "type": "text", "id": "tonopah_code", "label": "Tonopah discount code" },
+    { "type": "text", "id": "beale_a_code", "label": "Beale Modern Day discount code" },
+    { "type": "text", "id": "beale_b_code", "label": "Beale Retro 1980s discount code" },
     { "type": "text", "id": "hub_off", "label": "Mission Hub price text on the button", "info": "Example: USD $9.99. Leave empty to show the product price." }
   ],
   "presets": [{ "name": "U-2 Spyplane page" }]
@@ -213,7 +229,7 @@ liquid = LIQ_HEAD + render(page, {
     '@@HUBCODE@@': '{{ section.settings.hub_code | escape }}',
     '@@HUBOFF@@': '{{ section.settings.hub_off | escape }}',
     '@@IMGJS@@': '{{ u2base | json }}',
-    '@@CARTJS@@': '{ test: {% if request.design_mode or theme.role != "main" %}true{% else %}false{% endif %}, root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], bealem: [{{ u2ba | default: "null" }}], bealer: [{{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, price: {{ product.price | money | strip_html | json }} }',
+    '@@CARTJS@@': '{ test: {% if request.design_mode or theme.role != "main" %}true{% else %}false{% endif %}, root: {{ routes.root_url | json }}, u2: {{ u2var.id | default: "null" }}, ton: {{ u2ton | default: "null" }}, hub: {{ u2hub | default: "null" }}, add: { ton: [{{ u2ton | default: "null" }}], bealem: [{{ u2ba | default: "null" }}], bealer: [{{ u2bb | default: "null" }}], hub: [{{ u2hub | default: "null" }}] }, codes: { ton: {{ section.settings.tonopah_code | json }}, bealem: {{ section.settings.beale_a_code | json }}, bealer: {{ section.settings.beale_b_code | json }}, hub: {{ section.settings.hub_code | json }} }, price: {{ product.price | money | strip_html | json }} }',
 }) + SCHEMA
 assert liquid.count('{%') == liquid.count('%}')
 
@@ -221,7 +237,7 @@ shutil.rmtree(OUT, ignore_errors=True)
 for d in ('sections', 'templates', 'files'): os.makedirs(f'{OUT}/{d}')
 open(f'{OUT}/sections/u2-spyplane.liquid', 'w', encoding='utf-8').write(liquid)
 json.dump({'sections': {'main': {'type': 'u2-spyplane', 'settings': {
-    'tonopah': 'kbab-beale-air-force-base-retro-1980s-for-msfs2024-copy', 'hub': 'miltech-mission-hub', 'beale_a': 'blackbird-simulations-kbab-beale-air-force-base', 'beale_b': 'blackbird-simulations-kbab-beale-air-force-base-retro-1960s-for-msfs2024', 'hub_code': '', 'hub_off': 'USD $9.99', 'tonopah_badge': '-44%', 'hub_badge': '-38%', 'tonopah_text': 'USD $9.99', 'beale_a_text': 'USD $15.99', 'beale_a_badge': '-30%', 'beale_b_text': 'USD $15.99', 'beale_b_badge': '-27%'}}}, 'order': ['main']},
+    'tonopah': 'kbab-beale-air-force-base-retro-1980s-for-msfs2024-copy', 'hub': 'miltech-mission-hub', 'beale_a': 'blackbird-simulations-kbab-beale-air-force-base', 'beale_b': 'blackbird-simulations-kbab-beale-air-force-base-retro-1960s-for-msfs2024', 'hub_code': 'U2-MISSIONHUB', 'tonopah_code': 'U2-TONOPAH', 'beale_a_code': 'U2-BEALE-MODERN', 'beale_b_code': 'U2-BEALE-RETRO', 'hub_off': 'USD $9.99', 'tonopah_badge': '-44%', 'hub_badge': '-38%', 'tonopah_text': 'USD $9.99', 'beale_a_text': 'USD $15.99', 'beale_a_badge': '-30%', 'beale_b_text': 'USD $15.99', 'beale_b_badge': '-27%'}}}, 'order': ['main']},
     open(f'{OUT}/templates/product.u2-spyplane.json', 'w'), indent=2)
 
 # pictures: only the files that the page uses, with flat names
