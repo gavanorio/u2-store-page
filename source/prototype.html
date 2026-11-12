@@ -632,7 +632,8 @@ button { font-family: inherit; }
 .flare-in { grid-template-columns: minmax(0, 540px) minmax(0, 1fr); }
 .callout { min-width: 0; }
 .callout .word { white-space: nowrap; }
-.callout .word.long { font-size: clamp(40px, 7.2vw, 118px); }
+.callout .word.long { font-size: clamp(40px, calc((100vw - 700px) * .145), 118px); }
+@media (max-width: 760px) { .callout .word.long { font-size: clamp(40px, 11vw, 80px); } }
 @media (max-width: 760px) { .flare-in { grid-template-columns: minmax(0, 1fr); } }
 /* final call */
 .final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }

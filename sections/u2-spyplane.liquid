@@ -647,7 +647,10 @@
 .u2p .flare-in { grid-template-columns: minmax(0, 540px) minmax(0, 1fr); }
 .u2p .callout { min-width: 0; }
 .u2p .callout .word { white-space: nowrap; }
-.u2p .callout .word.long { font-size: clamp(40px, 7.2vw, 118px); }
+.u2p .callout .word.long { font-size: clamp(40px, calc((100vw - 700px) * .145), 118px); }
+@media (max-width: 760px) {
+.u2p .callout .word.long { font-size: clamp(40px, 11vw, 80px); }
+}
 @media (max-width: 760px) {
 .u2p .flare-in { grid-template-columns: minmax(0, 1fr); }
 }
