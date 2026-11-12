@@ -93,7 +93,7 @@ assert '@@HUBCODE@@' in body
 
 # ---------- script ----------
 js = js.replace("'img/liv/", "IMG + 'liv_").replace("'img/", "IMG + '")
-assert js.count('IMG + ') == 5
+assert js.count('IMG + ') == 6
 js = js.replace("  const $ = (s) => document.querySelector(s);", "  const $ = (s) => document.querySelector(s);\n  const IMG = @@IMGJS@@, CART = @@CARTJS@@;", 1)
 old = "  addCart.addEventListener('click', (e) => { if (addCart.getAttribute('aria-disabled') === 'true') e.preventDefault(); });"
 assert old in js

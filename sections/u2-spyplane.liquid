@@ -656,6 +656,7 @@
 }
 .u2p .flare-vid { z-index: 0; }
 .u2p .flare-vid iframe { transform: translate(-50%, -50%) scale(1.36); }
+.u2p .hero-vid video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
@@ -692,7 +693,7 @@
   <!-- 74,500 ft -->
   <section class="hero bleed" id="top">
     <img class="hero-img" id="heroImg" src="{{ u2base }}shot_6.webp" width="2400" height="1153" fetchpriority="high" alt="The U-2S with the dorsal SPAN antenna, high over a mountain range below a dark blue sky">
-    <div class="hero-vid" id="heroVid" data-yt="r-K6oqHTbV0" data-start="7" data-end="149" aria-hidden="true"></div>
+    <div class="hero-vid" id="heroVid" data-file="hero.mp4" data-yt="r-K6oqHTbV0" data-start="7" data-end="149" aria-hidden="true"></div>
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="wrap hero-in">
       <div class="lockup">
@@ -1083,7 +1084,7 @@
     <i class="mk" data-alt="12" style="position:absolute;top:34%"></i>
     <div class="flare-stage">
       <img class="flare-bg" id="flareBg" src="{{ u2base }}shot_1.webp" width="2400" height="1153" alt="The U-2S low over a tree line with the gear down on final approach">
-      <div class="hero-vid flare-vid" id="flareVid" data-yt="r-K6oqHTbV0" data-start="139" data-end="149" aria-hidden="true"></div>
+      <div class="hero-vid flare-vid" id="flareVid" data-file="landing.mp4" data-yt="r-K6oqHTbV0" data-start="139" data-end="149" aria-hidden="true"></div>
       <div class="wrap flare-in">
         <div class="flare-copy">
           <p class="eyebrow"><span class="fl">1,500 FT</span>Mobile</p>
@@ -1331,11 +1332,28 @@
     });
     box.appendChild(f);
   }
-  ytBackground($('#heroVid'));
+  /* a video file from the store plays with no player at all: no icons, and an exact loop. YouTube is the fallback. */
+  function fileBackground(box) {
+    if (!box || reduce || box.dataset.on) return;
+    if (!box.dataset.file) return ytBackground(box);
+    box.dataset.on = '1';
+    const v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true'); v.tabIndex = -1;
+    v.preload = 'auto'; v.disablePictureInPicture = true;
+    box.classList.add('on');
+    const fail = () => { v.remove(); box.classList.remove('on', 'play'); delete box.dataset.on; box.dataset.file = ''; ytBackground(box); };
+    v.addEventListener('playing', () => box.classList.add('play'), { once: true });
+    v.addEventListener('error', fail, { once: true });
+    v.src = IMG + '' + box.dataset.file;
+    box.appendChild(v);
+    const p = v.play(); if (p && p.catch) p.catch(() => {});
+  }
+  fileBackground($('#heroVid'));
   (() => {                                                     // the landing section video starts when the section comes near the window
-    const box = $('#flareVid'); if (!box || !box.dataset.yt) return;
-    if (!('IntersectionObserver' in window)) return ytBackground(box);
-    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); ytBackground(box); } }, { rootMargin: '900px 0px' });
+    const box = $('#flareVid'); if (!box) return;
+    if (!('IntersectionObserver' in window)) return fileBackground(box);
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); fileBackground(box); } }, { rootMargin: '900px 0px' });
     io.observe(box);
   })();
 
