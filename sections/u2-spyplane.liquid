@@ -629,8 +629,10 @@
 .u2p .buy-x small { display: block; line-height: 1.4; }
 .u2p .buy-x small s { color: rgba(255,255,255,.5); margin-right: 4px; }
 .u2p .buy-x small strong { color: #fff; font-weight: 600; }
-.u2p .flare { background: transparent; }
-.u2p .flare-stage { position: relative; top: auto; will-change: transform; }
+.u2p .flare { background: transparent; position: relative; }
+.u2p .flare-stage { position: relative; top: auto; transform: none; }
+.u2p .flare-stage[data-pin="pin"] { position: fixed; top: 0; left: 0; right: 0; z-index: 3; }
+.u2p .flare-stage[data-pin="post"] { position: absolute; top: auto; bottom: 0; left: 0; right: 0; }
 .u2p .intro-copy p.lead { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.5; color: var(--ink); font-weight: 500; }
 .u2p [hidden] { display: none !important; }
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
@@ -1515,8 +1517,12 @@
     dims.style.setProperty('--draw', clamp((vh * 0.92 - dr.top) / (vh * 0.5), 0, 1).toFixed(3));
 
     // landing: mobile's callouts
-    // the landing picture stays in view while the page moves through its section (done here, so that it does not depend on the theme)
-    if (tops.mobile && flareStage) flareStage.style.transform = 'translate3d(0,' + clamp(y - tops.mobile.top, 0, Math.max(0, tops.mobile.h - flareStage.offsetHeight)).toFixed(1) + 'px,0)';
+    // the landing picture stays in view while the page moves through its section: fixed to the window in that range (the same method as the altitude tape)
+    if (tops.mobile && flareStage) {
+      const end = tops.mobile.top + tops.mobile.h - flareStage.offsetHeight;
+      const st = y < tops.mobile.top ? 'pre' : y > end ? 'post' : 'pin';
+      if (flareStage.dataset.pin !== st) flareStage.dataset.pin = st;
+    }
     const inFlare = tops.mobile && y + vh > tops.mobile.top && y < tops.mobile.top + tops.mobile.h;
     if (inFlare) {
       if (!reduce) flareBg.style.setProperty('--fz', (1 + clamp(1 - alt / 1500, 0, 1) * 0.12).toFixed(4));
