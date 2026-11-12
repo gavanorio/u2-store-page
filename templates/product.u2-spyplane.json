@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "u2-spyplane",
+      "settings": {
+        "tonopah": "kbab-beale-air-force-base-retro-1980s-for-msfs2024-copy",
+        "hub": "miltech-mission-hub",
+        "hub_code": "",
+        "hub_off": "USD $9.99 with the U-2"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

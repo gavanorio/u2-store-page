@@ -1,0 +1,1495 @@
+<meta charset="utf-8">
+<title>U-2 Spyplane</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Miltech Simulations U-2 Spyplane for Microsoft Flight Simulator 2024.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap">
+<style>
+/* Layout: a Miltech Simulations product page (store layout after the iniBuilds A380 page) that is also a descent:
+   hero at 72,000 ft, chapters marked by flight level, the ramp at 0 ft. A PFD-style altitude tape rides the right edge.
+   One brand look on purpose: Miltech's charcoal-on-white store with dark photo bands, so a single palette. */
+:root {
+  color-scheme: light;
+  --paper: #ffffff;
+  --mist: #f2f2f2;
+  --char: #272727;          /* Miltech charcoal */
+  --deep: #151515;
+  --ink: #1f1f1f;
+  --mute: rgba(39, 39, 39, .7);
+  --line: rgba(39, 39, 39, .12);
+  --on-dark: rgba(255, 255, 255, .74);
+  --line-dark: rgba(255, 255, 255, .14);
+  --mfd: #43d36f;           /* cockpit symbology only */
+  --amber: #f3a43b;         /* caution lamps only */
+  --cyan: #66cbe0;
+  --brass: #c8a46a;         /* museum plaques only */
+  --red: #e5322d;           /* release offer only */
+  --ok: #2fae5b;
+  --sans: "Jost", "Futura", "Century Gothic", "Segoe UI", system-ui, sans-serif;
+  --data: "Jost", "Futura", "Century Gothic", "Segoe UI", system-ui, sans-serif;   /* one family, as on the roadmap page; digits stay tabular */
+  --gut-l: max(16px, env(safe-area-inset-left, 0px));
+  --gut-r: max(16px, env(safe-area-inset-right, 0px));
+  --tape: 0px;
+}
+@media (min-width: 1100px) { :root { --tape: 150px; } }
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.65 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+img { max-width: 100%; height: auto; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { margin: 0; font-family: var(--sans); text-wrap: balance; }
+h2 { font-size: clamp(30px, 3.7vw, 54px); line-height: 1.02; font-weight: 700; text-transform: uppercase; letter-spacing: .01em; }
+h3 { font-size: 19px; line-height: 1.25; font-weight: 600; }
+p { margin: 0; }
+.wrap { width: 100%; max-width: 1280px; margin: 0 auto; padding-left: var(--gut-l); padding-right: var(--gut-r); }
+main { padding-right: var(--tape); }
+.bleed { margin-right: calc(var(--tape) * -1); }       /* photo bands run under the altitude tape */
+.bleed .wrap { padding-right: calc(var(--gut-r) + var(--tape)); max-width: calc(1280px + var(--tape)); }
+.eyebrow { display: flex; align-items: center; gap: 12px; font: 500 12.5px/1.3 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
+.eyebrow .fl { font: 700 11.5px/1 var(--data); letter-spacing: .1em; padding: 6px 8px; border: 1px solid currentColor; border-radius: 4px; }
+.dark .eyebrow { color: var(--on-dark); }
+.lede { font-size: clamp(17px, 1.4vw, 19.5px); line-height: 1.65; color: var(--mute); max-width: 62ch; }
+.dark .lede { color: var(--on-dark); }
+.small { font-size: 14px; color: var(--mute); }
+.dark { background: var(--char); color: #fff; }
+.sec { position: relative; padding-block: clamp(72px, 10vw, 140px); }
+.mk { display: block; height: 0; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; text-decoration: none;
+  font: 700 14px/1 var(--sans); letter-spacing: .02em; padding: 17px 32px; border-radius: 10px; border: 1px solid transparent;
+  transition: background .2s, color .2s, border-color .2s, transform .2s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-dark { background: var(--char); color: #fff; }
+.btn-dark:hover { background: #000; }
+.btn-light { background: #fff; color: var(--char); }
+.btn-light:hover { background: var(--mist); }
+.btn-line { border-color: currentColor; background: transparent; }
+.btn-block { width: 100%; }
+
+/* ---------- header (Miltech store header) ---------- */
+.bar { position: fixed; top: 0; left: 0; right: 0; z-index: 40; padding-top: env(safe-area-inset-top, 0px); color: #fff; transition: background .3s, box-shadow .3s; }
+.bar::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0, 0, 0, .45), transparent); pointer-events: none; transition: opacity .3s; }
+.bar.solid { background: var(--char); box-shadow: 0 1px 0 rgba(255, 255, 255, .06); }
+.bar.solid::before { opacity: 0; }
+.bar-in { position: relative; display: flex; align-items: center; gap: 28px; height: 66px; padding-left: var(--gut-l); padding-right: var(--gut-r); }
+.logo { display: flex; align-items: center; }
+.logo img { height: 19px; width: auto; display: block; }
+.bar nav { display: flex; gap: 26px; margin: 0 auto; }
+.bar nav a { text-decoration: none; font: 400 14px/1 var(--sans); opacity: .92; }
+.bar nav a.b { font-weight: 700; }
+.bar nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 5px; }
+.bar .btn { padding: 12px 20px; }
+.alt-pill { display: none; font: 400 11.5px/1 var(--data); letter-spacing: .08em; color: var(--mfd); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.alt-pill b { color: #fff; }
+@media (max-width: 1099px) { .bar nav { display: none; } .alt-pill { display: inline; margin-left: auto; } }
+@media (max-width: 400px) { .logo img { height: 14px; } .bar .btn { padding: 11px 14px; } }
+
+/* ---------- altitude tape, after the U-2S PFD: grey-violet scale on the attitude colours, navy readout with a tens drum, vertical speed scale ---------- */
+.tape { position: fixed; z-index: 35; top: 50%; right: calc(env(safe-area-inset-right, 0px) + 8px); transform: translateY(-46%); width: 132px; display: none; font-family: var(--data); font-variant-numeric: tabular-nums; }
+@media (min-width: 1100px) { .tape { display: block; } }
+.tape-shell { display: grid; gap: 8px; padding: 10px 8px 10px 16px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,.35); box-shadow: 0 6px 22px rgba(0,0,0,.28);
+  background: linear-gradient(to bottom, #4a97e6 0, #5aa2ea calc(50% - 1px), #fff calc(50% - 1px), #fff calc(50% + 1px), #c2364f calc(50% + 1px), #a92c45 100%); }
+.tape-head { font-size: 15px; font-weight: 600; letter-spacing: .04em; color: #fff; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,.45); }
+.tape-foot { display: grid; gap: 2px; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.tape-foot b { font-size: 15px; font-weight: 600; color: #fff; }
+.tape-foot span { font-size: 9.5px; font-weight: 700; letter-spacing: .14em; color: #fff; min-height: 2.5em; line-height: 1.25; }
+.tape-row { display: grid; grid-template-columns: 62px 34px; gap: 10px; align-items: center; }
+.tape-frame { position: relative; }
+.tape-win { position: relative; height: min(48vh, 430px); overflow: hidden; background: rgba(70, 66, 104, .86); border: 2px solid #fff; border-radius: 2px; }
+.tape-strip { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
+.tape-strip i { position: absolute; left: 0; height: 2px; width: 11px; margin-top: -1px; background: #fff; }
+.tape-strip i.m { width: 6px; height: 1.5px; opacity: .85; }
+.tape-strip span { position: absolute; right: 7px; font-size: 16px; font-weight: 400; letter-spacing: .03em; line-height: 1; transform: translateY(-50%); color: #fff; }
+.tape-box { position: absolute; z-index: 2; left: -10px; right: 20px; top: 50%; transform: translateY(-50%); height: 34px; display: grid; place-items: center; background: #0d1436; border: 2px solid #fff; border-right: 0; font-size: 25px; font-weight: 600; letter-spacing: .02em; line-height: 1; color: #fff; }
+.tape-drum { position: absolute; z-index: 2; right: -6px; top: 50%; transform: translateY(-50%); width: 28px; height: 54px; display: grid; align-content: center; justify-items: center; gap: 3px; background: #0d1436; border: 2px solid #fff; font-size: 13px; font-weight: 600; line-height: 1; color: #fff; overflow: hidden; }
+.tape-drum span:nth-child(2) { font-size: 14px; }
+.vsi { position: relative; height: min(40vh, 356px); }
+.vsi svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vsi svg polygon { fill: rgba(70, 66, 104, .86); stroke: #fff; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.vsi em { position: absolute; left: 9px; font: 400 11.5px/1 var(--data); font-style: normal; color: #fff; transform: translateY(-50%); }
+.vsi em::before { content: ""; position: absolute; left: -9px; top: 50%; width: 5px; height: 1.5px; margin-top: -1px; background: #fff; }
+.vsi-bar { position: absolute; left: 2px; width: 5px; background: #fff; top: 50%; height: 0; }
+.vsi-box { position: absolute; z-index: 2; left: 9px; right: -4px; top: 50%; transform: translateY(-50%); height: 19px; display: grid; place-items: center; background: #fff; color: #0d1436; border: 1px solid #0d1436; font: 600 12px/1 var(--data); letter-spacing: .04em; }
+
+/* ---------- hero ---------- */
+.hero { position: relative; height: clamp(600px, 94vh, 1000px); overflow: hidden; color: #fff; background: #0b1626; }
+.hero-img { position: absolute; inset: -4% 0 0; width: 100%; height: 108%; object-fit: cover; object-position: 66% 42%; transform: translate3d(0, var(--hy, 0px), 0) scale(var(--hs, 1.04)); will-change: transform; }
+.hero-shade { position: absolute; inset: 0; background:
+  linear-gradient(to right, rgba(5, 12, 26, .86) 0%, rgba(5, 12, 26, .55) 34%, rgba(5, 12, 26, 0) 62%),
+  linear-gradient(to bottom, rgba(5, 12, 26, .5) 0%, transparent 30%, transparent 62%, rgba(5, 12, 26, .72) 100%); }
+.hero-in { position: relative; z-index: 1; height: 100%; display: grid; align-content: center; gap: 22px; padding-top: 70px; }
+.kicker { font: 500 13px/1.3 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: rgba(255, 255, 255, .86); }
+.hero-title { display: grid; line-height: .82; text-transform: uppercase; }
+.hero-title .big { font-size: clamp(108px, 17vw, 270px); font-weight: 800; letter-spacing: -.025em; animation: rise 1.3s cubic-bezier(.2, .7, .1, 1) both; }
+.hero-title .sub { font-size: clamp(22px, 3vw, 44px); font-weight: 500; letter-spacing: .42em; margin-top: 18px; animation: track 1.7s cubic-bezier(.2, .7, .1, 1) both; }
+@keyframes rise { from { transform: translateY(16px); } to { transform: none; } }
+@keyframes track { from { letter-spacing: .7em; } to { letter-spacing: .42em; } }
+.hero-tag { font-size: clamp(18px, 1.6vw, 22px); max-width: 30ch; color: rgba(255, 255, 255, .9); }
+.hero .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.hero-facts { position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; }
+.facts-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid rgba(255, 255, 255, .22); padding-block: 18px 26px; }
+.facts-row > div { display: grid; gap: 2px; min-width: 0; }
+.facts-row dt { font: 500 11px/1.3 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: rgba(255, 255, 255, .72); }
+.facts-row dd { margin: 0; font: 700 clamp(18px, 2vw, 27px)/1.15 var(--data); font-variant-numeric: tabular-nums; }
+.facts-row dd small { font-size: .5em; letter-spacing: .1em; margin-left: 4px; color: rgba(255, 255, 255, .72); }
+@media (max-width: 760px) {
+  .hero { height: auto; min-height: 640px; }
+  .hero-shade { background: linear-gradient(to bottom, rgba(5, 12, 26, .62), rgba(5, 12, 26, .35) 40%, rgba(5, 12, 26, .85)); }
+  .hero-img { object-position: 74% 40%; }
+  .hero-in { height: auto; padding-top: 120px; padding-bottom: 210px; }
+  .facts-row { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+  .facts-row > div:last-child { grid-column: 1 / -1; }
+}
+
+/* ---------- product box ---------- */
+.product { padding-block: clamp(40px, 6vw, 80px); }
+.product-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 64px); align-items: start; }
+.product-grid > * { min-width: 0; }
+@media (max-width: 900px) { .product-grid { grid-template-columns: minmax(0, 1fr); } }
+.media-main { display: block; width: 100%; padding: 0; border: 0; background: var(--mist); border-radius: 12px; overflow: hidden; cursor: zoom-in; aspect-ratio: 1.6; }
+.media-main img { display: block; width: 100%; height: 100%; object-fit: cover; transition: opacity .25s; }
+.thumbs { position: relative; display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; scrollbar-color: #bbb transparent; }
+.thumbs button { flex: 0 0 auto; width: 132px; scroll-snap-align: start; padding: 0; border: 2px solid transparent; border-radius: 8px; overflow: hidden; cursor: pointer; background: var(--mist); aspect-ratio: 1.6; }
+.thumbs button[aria-current="true"] { border-color: var(--char); }
+.thumbs img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.buybox { display: grid; gap: 18px; position: sticky; top: 92px; }
+.vendor { font: 500 12.5px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--mute); }
+.ptitle { font-size: clamp(28px, 2.6vw, 38px); line-height: 1.15; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.price { display: flex; align-items: baseline; gap: 12px; }
+.price .lbl { font-size: 14px; color: var(--mute); }
+.price b { font-size: 22px; font-weight: 600; }
+.compat { margin: 0; padding: 16px 18px; border-radius: 10px; background: var(--mist); display: grid; gap: 4px; }
+.compat dt { font-weight: 600; font-size: 15px; }
+.compat dd { margin: 0; font-size: 15px; color: var(--mute); display: flex; align-items: center; gap: 8px; }
+.compat dd::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #2fae5b; }
+.note { font-size: 14px; color: var(--mute); background: var(--mist); border-radius: 8px; padding: 10px 14px; }
+.manual { font-size: 14.5px; color: var(--mute); }
+.manual a { color: var(--ink); font-weight: 600; }
+.quick { list-style: none; margin: 4px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.quick li { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.quick li span { color: var(--mute); }
+.quick li b { font: 700 14.5px/1.4 var(--data); font-variant-numeric: tabular-nums; }
+
+/* ---------- badge strip ---------- */
+.badges { border-block: 1px solid var(--line); }
+.badges ul { list-style: none; margin: 0 auto; padding-block: 26px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.badges li { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; font: 600 13px/1.35 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+.badges svg { width: 40px; height: 40px; stroke: var(--char); fill: none; stroke-width: 1.5; }
+@media (max-width: 900px) { .badges ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .badges ul { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- intro + airframe ---------- */
+.intro-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 80px); }
+.intro-grid > * { min-width: 0; }
+.intro-copy { display: grid; gap: 18px; }
+.intro-copy p { color: var(--mute); }
+@media (max-width: 900px) { .intro-grid { grid-template-columns: minmax(0, 1fr); } }
+.airframe { background: var(--mist); }
+.plan-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(28px, 4vw, 64px); align-items: center; }
+.plan-grid > * { min-width: 0; }
+@media (max-width: 900px) { .plan-grid { grid-template-columns: minmax(0, 1fr); } }
+.plan-art { position: relative; margin: 0; }
+.plan-art img { display: block; width: 100%; height: auto; }
+.dims { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; --draw: 1; }
+.dims .ln { fill: none; stroke: var(--char); stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--draw)); }
+.dims .ext { stroke: rgba(39, 39, 39, .45); stroke-width: 2; stroke-dasharray: 10 8; }
+.dims text { font: 700 36px var(--data); fill: var(--char); letter-spacing: 3px; }
+.dims .tag { fill: rgba(242, 242, 242, .9); }
+.specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 26px 0 0; border-top: 1px solid var(--line); }
+.specs > div { padding: 13px 12px 13px 0; border-bottom: 1px solid var(--line); display: grid; gap: 2px; }
+.specs dt { font: 500 11px/1.3 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
+.specs dd { margin: 0; font: 700 16px/1.3 var(--data); font-variant-numeric: tabular-nums; }
+
+/* ---------- photo chapters ---------- */
+.chapter { position: relative; height: clamp(460px, 78vh, 860px); overflow: hidden; color: #fff; background: #0b1626; }
+.chapter img { position: absolute; inset: -8% 0; width: 100%; height: 116%; object-fit: cover; transform: translate3d(0, var(--py, 0px), 0); will-change: transform; }
+.chapter::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0, 0, 0, .72), rgba(0, 0, 0, .1) 46%, transparent 70%); }
+.chapter .wrap { position: relative; z-index: 1; height: 100%; display: grid; align-content: end; gap: 12px; padding-bottom: clamp(34px, 6vw, 70px); }
+.chapter .eyebrow { color: rgba(255, 255, 255, .85); }
+.chapter h2 { font-size: clamp(32px, 4.6vw, 70px); }
+.chapter p { max-width: 52ch; color: rgba(255, 255, 255, .86); font-size: clamp(16px, 1.3vw, 19px); }
+
+/* ---------- features tabs ---------- */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+.tab { font: 600 14.5px/1 var(--sans); padding: 13px 20px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--char); color: #fff; border-color: var(--char); }
+.panel-f { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(28px, 4vw, 64px); align-items: center; padding-top: 36px; }
+.panel-f > * { min-width: 0; }
+@media (max-width: 900px) { .panel-f { grid-template-columns: minmax(0, 1fr); } }
+.panel-f h3 { font-size: 26px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 14px; }
+.panel-f ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.panel-f li { position: relative; padding-left: 22px; color: var(--mute); font-size: 16px; }
+.panel-f li::before { content: ""; position: absolute; left: 0; top: .72em; width: 9px; height: 2px; background: var(--char); }
+.panel-f figure { margin: 0; }
+.panel-f figure img { display: block; width: 100%; height: auto; border-radius: 12px; }
+.panel-f figure.screen { display: grid; place-items: center; background: var(--deep); border-radius: 12px; padding: 22px; }
+.panel-f figure.screen img { width: auto; max-height: 460px; border-radius: 4px; }
+.panel-f figure.plate img { background: var(--mist); }
+.panel-f figcaption { font-size: 13.5px; color: var(--mute); margin-top: 10px; }
+.panel-f figure.screen figcaption { color: var(--on-dark); }
+
+/* ---------- cockpit band ---------- */
+.cockpit { background: var(--deep); color: #fff; }
+.cockpit-head { display: grid; gap: 18px; max-width: 760px; }
+.panel { position: relative; max-width: 1180px; margin: clamp(36px, 6vw, 64px) auto 0; }
+.panel > img { display: block; width: 100%; height: auto; }
+.scr { position: absolute; overflow: hidden; background: #000; border-radius: 3px; cursor: pointer; border: 0; padding: 0; }
+.scr img { display: block; width: 100%; height: 100%; object-fit: fill; }
+.scr::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(128deg, rgba(255, 255, 255, .08), transparent 38%), radial-gradient(120% 90% at 50% 50%, transparent 60%, rgba(0, 0, 0, .35)); }
+.scr::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; background: repeating-linear-gradient(0deg, rgba(67, 211, 111, .22) 0 2px, transparent 2px 5px), #020703; }
+.scr.boot::before { animation: bit .95s steps(5) forwards; }
+.scr.boot img { animation: flick .95s linear; }
+@keyframes bit { 0%, 64% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes flick { 0%, 60% { filter: brightness(0); } 70% { filter: brightness(1.9); } 100% { filter: brightness(1); } }
+.scr-l { left: 15.94%; top: 35.53%; width: 18.11%; height: 35.1%; }
+.scr-c { left: 40.67%; top: 17.76%; width: 18.17%; height: 35.53%; }
+.scr-r { left: 64.89%; top: 35.53%; width: 18.22%; height: 35.1%; }
+.scr-u { left: 29.83%; top: 19.06%; width: 6.39%; height: 10.66%; cursor: default; }
+.pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-top: 22px; }
+.pager .lbl { font: 500 12px/1 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--on-dark); margin-right: 6px; }
+.chip { font: 700 12.5px/1 var(--data); letter-spacing: .1em; padding: 10px 14px; border-radius: 999px; cursor: pointer; background: transparent; color: rgba(255, 255, 255, .8); border: 1px solid var(--line-dark); }
+.chip[aria-pressed="true"] { color: var(--mfd); border-color: var(--mfd); box-shadow: 0 0 14px rgba(67, 211, 111, .22); }
+
+/* ---------- walk around ---------- */
+.walk { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 30px; }
+.walk figure { margin: 0; min-width: 0; display: grid; gap: 12px; align-content: start; }
+.walk .zoom { display: block; width: 100%; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: var(--mist); cursor: zoom-in; aspect-ratio: 16 / 9; }
+.walk .zoom img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.walk .zoom:hover img { transform: scale(1.03); }
+.walk figcaption { display: grid; gap: 4px; }
+.walk figcaption p { font-size: 15px; color: var(--mute); max-width: 52ch; }
+@media (max-width: 760px) { .walk { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .walk .zoom:hover img { transform: none; } }
+
+/* ---------- systems (annunciator panel) ---------- */
+.lamps { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 12px; margin-top: clamp(32px, 5vw, 56px); }
+.lamp { background: linear-gradient(#1e1e1e, #161616); border: 1px solid rgba(255, 255, 255, .08); border-radius: 10px; padding: 18px 18px 20px; display: grid; gap: 14px; align-content: start; }
+.lamp .lg { justify-self: start; font: 700 13px/1 var(--data); letter-spacing: .12em; padding: 10px 13px; border-radius: 3px; color: #9a7a4a; background: #120d06; border: 1px solid #3a2c18; transition: color .5s, background .5s, box-shadow .5s, border-color .5s, text-shadow .5s; }
+.lamp.g .lg { color: #5c8d68; background: #07100a; border-color: #1e3624; }
+.lamp.lit .lg { color: #ffe0ad; background: #3d2608; border-color: var(--amber); box-shadow: 0 0 22px rgba(243, 164, 59, .45), inset 0 0 14px rgba(243, 164, 59, .35); text-shadow: 0 0 8px rgba(255, 190, 90, .85); }
+.lamp.g.lit .lg { color: #c9ffd6; background: #0b2913; border-color: var(--mfd); box-shadow: 0 0 22px rgba(67, 211, 111, .4), inset 0 0 14px rgba(67, 211, 111, .3); text-shadow: 0 0 8px rgba(120, 255, 160, .8); }
+.lamp p { font-size: 15px; color: var(--on-dark); }
+.console { display: flex; gap: 14px; overflow-x: auto; margin-top: 44px; padding-bottom: 12px; scroll-snap-type: x proximity; scrollbar-color: #444 transparent; }
+.console figure { flex: 0 0 auto; width: 260px; margin: 0; scroll-snap-align: start; }
+.console .pl { height: 220px; display: grid; place-items: center; background: #0d0d0d; border: 1px solid rgba(255, 255, 255, .08); border-radius: 10px; overflow: hidden; }
+.console img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.console figcaption { font: 500 12px/1.4 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--on-dark); margin-top: 8px; }
+
+/* ---------- liveries ---------- */
+.liveries { background: var(--mist); }
+.liv-stage { margin-top: 28px; background: #fff; border-radius: 14px; padding: clamp(16px, 3vw, 40px); display: grid; gap: 10px; }
+.liv-stage img { display: block; width: 100%; height: auto; aspect-ratio: 930 / 340; object-fit: contain; }
+.liv-name { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.liv-name b { font-size: 22px; font-weight: 600; }
+.liv-name span { font: 400 12.5px/1 var(--data); letter-spacing: .1em; color: var(--mute); }
+.liv-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.liv-list button { font: 500 14px/1 var(--sans); padding: 11px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+.liv-list button[aria-pressed="true"] { background: var(--char); color: #fff; border-color: var(--char); }
+
+/* ---------- landing (mobile's callouts) ---------- */
+.flare { position: relative; height: 330vh; background: #0b0b0b; }
+.flare-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; align-items: end; color: #fff; }
+.flare-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transform: scale(var(--fz, 1)); transform-origin: 50% 30%; will-change: transform; }
+.flare-stage::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0, 0, 0, .78) 0%, rgba(0, 0, 0, .4) 44%, transparent 72%), linear-gradient(to top, rgba(0, 0, 0, .7), transparent 50%); }
+.flare-in { position: relative; z-index: 2; padding-bottom: clamp(44px, 9vh, 104px); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; }
+.flare-copy { display: grid; gap: 18px; max-width: 540px; }
+.flare-copy .eyebrow { color: rgba(255, 255, 255, .85); }
+.flare-copy p { color: rgba(255, 255, 255, .88); }
+.callout { text-align: right; display: grid; gap: 8px; justify-items: end; }
+.callout .word { font: 800 clamp(60px, 12vw, 196px)/.84 var(--sans); text-transform: uppercase; letter-spacing: -.02em; text-shadow: 0 6px 40px rgba(0, 0, 0, .5); }
+.callout .word.pop { animation: pop .45s cubic-bezier(.2, .9, .2, 1.2); }
+@keyframes pop { from { transform: scale(.86); } to { transform: none; } }
+.callout .hat { font: 400 12px/1 var(--data); letter-spacing: .16em; font-variant-numeric: tabular-nums; }
+.callout .hat b { color: var(--mfd); font-size: 15px; }
+@media (max-width: 760px) {
+  .flare-in { grid-template-columns: minmax(0, 1fr); }
+  .callout { justify-items: start; text-align: left; order: -1; }
+  .flare-stage::after { background: linear-gradient(to top, rgba(0, 0, 0, .9) 0%, rgba(0, 0, 0, .6) 55%, rgba(0, 0, 0, .1) 85%); }
+}
+
+/* ---------- product info ---------- */
+.info-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 30px; }
+.info-grid > div { background: var(--mist); border-radius: 12px; padding: 20px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.info-grid h3 { font-size: 15px; font-weight: 600; }
+.info-grid p { font-size: 15px; color: var(--mute); }
+.info-grid a { color: var(--ink); font-weight: 600; }
+.req { margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.req > div { border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.req .k { font: 500 11px/1.3 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--mute); }
+.req p { font-size: 15.5px; }
+@media (max-width: 900px) { .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .req { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- final call ---------- */
+.final { position: relative; overflow: clip; background: radial-gradient(90% 60% at 50% 62%, #3a3f4a 0%, #1c1d21 55%, #111 100%); color: #fff; padding-top: clamp(70px, 9vw, 120px); }
+.final-head { display: grid; gap: 16px; justify-items: center; text-align: center; }
+.final-head .lede { margin: 0 auto; }
+.ground { position: relative; width: min(1100px, 100%); margin: 0 auto; }
+.ground img { position: relative; z-index: 1; display: block; width: 100%; height: auto; }
+.final-buy { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px 28px; margin-top: -2vw; padding-bottom: 80px; }
+.final-buy .price b { color: #fff; }
+.final-buy .price .lbl { color: var(--on-dark); }
+
+/* ---------- footer ---------- */
+footer { background: #fff; color: var(--ink); padding-block: 56px 36px; }
+.foot { display: grid; grid-template-columns: minmax(0, 5fr) repeat(2, minmax(0, 3fr)); gap: 32px; }
+.foot > * { min-width: 0; }
+.foot img { height: 20px; width: auto; filter: brightness(.15); }
+.foot h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 15px; }
+.foot a { color: var(--mute); text-decoration: none; }
+.foot a:hover { color: var(--ink); text-decoration: underline; }
+.legal { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: 13.5px; color: var(--mute); }
+@media (max-width: 760px) { .foot { grid-template-columns: minmax(0, 1fr); } }
+
+
+/* ---------- release state ---------- */
+.rel-chip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font: 500 14px/1.2 var(--sans); color: rgba(255,255,255,.9); }
+.rel-chip span { font: 700 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; background: var(--red); color: #fff; padding: 6px 9px; border-radius: 4px; }
+.rel-chip b { font: 700 15px/1 var(--data); letter-spacing: .04em; }
+.rel-chip i { font-style: normal; color: rgba(255,255,255,.78); font-variant-numeric: tabular-nums; }
+.offer { display: grid; gap: 6px; padding: 18px; border-radius: 12px; background: var(--deep); color: #fff; }
+.offer-k { justify-self: start; font: 700 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; background: var(--red); padding: 5px 8px; border-radius: 4px; }
+.offer-v { display: flex; align-items: baseline; gap: 12px; }
+.offer-v b { font-size: 36px; line-height: 1.05; font-weight: 700; }
+.offer-v s { color: rgba(255,255,255,.55); font-size: 17px; }
+.offer p { font-size: 14.5px; color: var(--on-dark); }
+.btn[aria-disabled="true"] { background: var(--mist); color: var(--mute); cursor: default; transform: none; }
+.tminus { font: 400 13px/1.4 var(--data); letter-spacing: .06em; color: var(--mute); text-align: center; font-variant-numeric: tabular-nums; }
+.tminus b { color: var(--ink); }
+.addon { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 14px; border: 1px dashed var(--line); border-radius: 10px; }
+.addon > span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--ok); color: #fff; font-size: 22px; line-height: 1; }
+.addon b { display: block; font-size: 15px; font-weight: 600; }
+.addon small { font-size: 13.5px; color: var(--mute); }
+.where { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12.5px; }
+.where em { font-style: normal; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+.where em.later { border-style: dashed; color: var(--mute); }
+
+/* ---------- history gallery ---------- */
+.history { background: #0a0b0d; color: #fff; padding-block: 0 clamp(64px, 8vw, 110px); }
+.his-hero { position: relative; min-height: clamp(380px, 56vh, 560px); display: grid; align-items: end; background: #0a0b0d; overflow: hidden; }
+.his-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+.his-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,11,13,0) 30%, rgba(10,11,13,.86) 78%, #0a0b0d); }
+.his-hero .wrap { position: relative; z-index: 1; display: grid; gap: 14px; padding-bottom: 28px; }
+.history .eyebrow { color: var(--brass); }
+.history .lede { color: rgba(255,255,255,.72); }
+.rail { display: flex; gap: 14px; overflow-x: auto; padding: 22px 0 18px; scroll-snap-type: x proximity; scrollbar-color: #444 transparent; }
+.plq { flex: 0 0 auto; width: min(300px, 78vw); scroll-snap-align: start; display: grid; gap: 8px; align-content: start; padding: 20px 20px 22px; border: 1px solid rgba(255,255,255,.1); border-top: 2px solid var(--brass); background: #0e1013; border-radius: 0 0 10px 10px; }
+.plq .y { font: 800 54px/1 var(--sans); color: transparent; -webkit-text-stroke: 1.2px var(--brass); letter-spacing: .01em; }
+.plq.now .y { color: var(--brass); }
+.plq .n { font: 400 10.5px/1.3 var(--data); letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+.plq h3 { font-size: 20px; }
+.plq p { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,.72); }
+.plq em { justify-self: start; font: 500 12px/1 var(--sans); font-style: normal; color: var(--brass); border: 1px solid rgba(200,164,106,.4); border-radius: 999px; padding: 5px 10px; margin-top: 4px; }
+.rail-hint { font: 400 11px/1 var(--data); letter-spacing: .14em; color: rgba(255,255,255,.45); }
+.hard { display: grid; gap: 18px; margin-top: clamp(48px, 7vw, 84px); padding-top: clamp(36px, 5vw, 56px); border-top: 1px solid rgba(255,255,255,.1); }
+.hard-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 18px; align-items: stretch; margin-top: 10px; }
+.hard-grid > * { min-width: 0; }
+.six { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; overflow: hidden; }
+.six div { background: #0e1013; padding: 18px; display: grid; gap: 6px; align-content: start; }
+.six b { font: 700 28px/1.05 var(--data); }
+.six small { font: 700 10.5px/1.3 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--brass); }
+.six p { font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.66); }
+.cc { margin: 0; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: #0e1013; padding: 16px; display: grid; gap: 10px; align-content: center; }
+.cc svg { display: block; width: 100%; height: auto; }
+.cc figcaption { font-size: 14px; line-height: 1.55; color: rgba(255,255,255,.72); }
+.cc figcaption span { display: block; font-size: 12px; color: rgba(255,255,255,.45); margin-top: 4px; }
+@media (max-width: 900px) { .hard-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 480px) { .six { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- sensors, sceneries, missions, releases ---------- */
+.cards3, .cards4 { display: grid; gap: 14px; margin-top: 30px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cards4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cd { min-width: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--paper); display: grid; align-content: start; }
+.cd .zoom { display: block; width: 100%; padding: 0; border: 0; border-bottom: 1px solid var(--line); background: var(--deep); cursor: zoom-in; aspect-ratio: 4 / 3; }
+.cd .zoom img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.cd-tx { padding: 16px 18px 18px; display: grid; gap: 5px; }
+.cd-tx small { font: 500 11px/1.3 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
+.cd-tx p { font-size: 14.5px; line-height: 1.55; color: var(--mute); }
+.shots { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.shots button { padding: 0; border: 0; border-radius: 10px; overflow: hidden; cursor: zoom-in; background: var(--mist); aspect-ratio: 16 / 9; grid-column: span 2; }
+.shots button:nth-child(-n+2) { grid-column: span 3; }
+.shots img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.msn { list-style: none; margin: 30px 0 0; padding: 0; border-top: 1px solid var(--line); counter-reset: m; }
+.msn li { counter-increment: m; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; column-gap: 14px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.msn li::before { content: counter(m, decimal-leading-zero); font: 700 13px/1 var(--data); color: var(--mute); }
+.msn b { font-size: 17px; font-weight: 600; }
+.msn b em { font: 700 10.5px/1 var(--sans); font-style: normal; letter-spacing: .1em; text-transform: uppercase; background: var(--ok); color: #fff; border-radius: 4px; padding: 3px 6px; margin-left: 8px; vertical-align: 2px; }
+.msn span { grid-column: 2; font-size: 14.5px; color: var(--mute); }
+.msn small { grid-column: 3; grid-row: 1; font: 400 12px/1 var(--data); letter-spacing: .06em; color: var(--mute); white-space: nowrap; }
+.rel2 { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); align-items: stretch; margin-top: 30px; }
+.rel2 .plus { display: grid; place-items: center; font-size: 30px; font-weight: 300; color: var(--mute); }
+.rc { min-width: 0; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: var(--paper); display: grid; grid-template-rows: auto 1fr; }
+.rc.d { background: var(--deep); border-color: var(--deep); color: #fff; }
+.rc-im { position: relative; aspect-ratio: 16 / 7; background: var(--deep); overflow: hidden; }
+.rc-im img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.rc-im span { position: absolute; left: 16px; bottom: 14px; font: 700 11px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--red); padding: 6px 9px; border-radius: 4px; }
+.rc:not(.d) .rc-im span { background: var(--ok); }
+.rc-tx { padding: 20px 22px 22px; display: grid; gap: 6px; align-content: start; }
+.rc-tx h3 { font-size: 30px; font-weight: 700; }
+.rc-tx > p { font-size: 15px; color: var(--mute); }
+.rc.d .rc-tx > p { color: var(--on-dark); }
+.rc-tx ul { list-style: none; margin: 10px 0 0; padding: 0; }
+.rc-tx li { position: relative; padding: 9px 0 9px 26px; border-top: 1px solid var(--line); font-size: 15px; line-height: 1.5; }
+.rc.d .rc-tx li { border-top-color: var(--line-dark); }
+.rc-tx li::before { content: ""; position: absolute; left: 3px; top: 15px; width: 11px; height: 6px; border-left: 2px solid var(--ok); border-bottom: 2px solid var(--ok); transform: rotate(-45deg); }
+@media (max-width: 900px) {
+  .cards3, .cards4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rel2 { grid-template-columns: minmax(0, 1fr); } .rel2 .plus { height: 36px; }
+  .msn li { grid-template-columns: 34px minmax(0, 1fr); } .msn small { grid-column: 2; grid-row: auto; margin-top: 4px; }
+}
+@media (max-width: 560px) { .cards3, .cards4 { grid-template-columns: minmax(0, 1fr); } .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } .shots button, .shots button:nth-child(-n+2) { grid-column: auto; } .shots button:first-child { grid-column: 1 / -1; } }
+.final-buy .offer-v b { font-size: 34px; }
+.final-buy .offer-v s { color: var(--on-dark); }
+
+/* ---------- lightbox ---------- */
+dialog.lb { padding: 0; border: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; }
+dialog.lb::backdrop { background: rgba(10, 10, 10, .92); }
+.lb-in { width: 100%; height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; padding: max(56px, env(safe-area-inset-top, 0px)) var(--gut-r) 24px var(--gut-l); gap: 14px; }
+.lb-in img { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+.lb-bar { display: flex; align-items: center; gap: 12px; color: #fff; }
+.lb-bar p { flex: 1; font-size: 15px; color: rgba(255, 255, 255, .8); }
+.lb-bar button { font: 600 14px/1 var(--sans); padding: 12px 18px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .3); background: transparent; color: #fff; cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title .big, .hero-title .sub, .scr.boot::before, .scr.boot img, .callout .word.pop { animation: none; }
+}
+
+/* ================= roadmap look (same tokens and parts as roadmap.miltechsimulations.com) ================= */
+:root {
+  --mist: #fafafa; --soft: #f4f4f4; --char: #101010; --deep: #0b0d10; --ink: #262626; --mute: #666; --line: #e3e3e3;
+  --blue: #225fc5; --blue-soft: #eef5fd; --blue-line: #bcd4f1;
+  --ok: #1f8f4c; --ok-bg: #edf8f1; --ok-line: #bfe3cd;
+  --warn: #9a6200; --warn-bg: #fff7e8; --warn-line: #f0d9a8;
+  --shadow: 0 1px 2px rgba(16,16,16,.05), 0 8px 24px rgba(16,16,16,.06);
+}
+body { font-size: 16.5px; line-height: 1.6; }
+h2 { font-size: clamp(26px, 2.9vw, 42px); line-height: 1.08; letter-spacing: .02em; }
+h3 { font-size: 18px; font-weight: 700; }
+.chapter h2 { font-size: clamp(30px, 3.9vw, 58px); }
+.lede { font-size: clamp(16.5px, 1.25vw, 18.5px); line-height: 1.6; }
+.sec { padding-block: clamp(60px, 7.5vw, 104px); }
+.airframe, .liveries { border-block: 1px solid var(--line); }
+.dims .tag { fill: rgba(250, 250, 250, .92); }
+/* tags */
+.eyebrow { font: 700 11.5px/1.3 var(--sans); letter-spacing: .14em; gap: 10px; }
+.eyebrow .fl { font: 700 11px/1 var(--sans); letter-spacing: .08em; padding: 6px 8px; border-radius: 4px; background: var(--blue-soft); color: var(--blue); border: 1px solid var(--blue-line); }
+.dark .eyebrow .fl, .chapter .eyebrow .fl, .history .eyebrow .fl, .flare .eyebrow .fl { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.22); }
+.vendor, .kicker { font-weight: 700; font-size: 11.5px; letter-spacing: .14em; }
+/* buttons */
+.btn { min-height: 44px; padding: 0 22px; border-radius: 6px; font: 600 14.5px/1 var(--sans); letter-spacing: .01em; gap: 8px; }
+.btn:hover { transform: none; }
+.btn-dark { background: #101010; color: #fff; }
+.btn-dark:hover { background: #2a2a2a; }
+.btn-light { background: #fff; color: #101010; }
+.btn-light:hover { background: #ececec; }
+.btn-line { border-color: currentColor; }
+.btn-line:hover { background: rgba(127,127,127,.14); }
+.bar .btn { min-height: 38px; padding: 0 16px; }
+.btn[aria-disabled="true"] { opacity: .6; cursor: default; pointer-events: none; }
+.tab, .liv-list button, .chip, .lb-bar button { border-radius: 6px; }
+.tab { font: 600 14px/1 var(--sans); padding: 0 16px; min-height: 40px; }
+.tab[aria-selected="true"], .liv-list button[aria-pressed="true"] { background: #101010; border-color: #101010; }
+.liv-list button { padding: 0 14px; min-height: 38px; }
+.tabs { border-bottom: 0; padding-bottom: 0; }
+/* cards and pictures */
+.media-main, .walk .zoom, .panel-f figure img, .panel-f figure.screen, .liv-stage, .lamp, .console .pl, .cd, .rc, .shots button, .cc, .plq, .six { border-radius: 8px; }
+.plq { border-radius: 0 0 8px 8px; }
+.media-main { border: 1px solid var(--line); }
+.thumbs button { border-radius: 6px; }
+.thumbs button[aria-current="true"] { border-color: #101010; }
+.liv-stage { border: 1px solid var(--line); }
+.cd, .rc { box-shadow: none; }
+.specs > div { padding-block: 11px; }
+/* buy column */
+.buybox { gap: 16px; }
+.ptitle { font-size: clamp(24px, 2.1vw, 30px); font-weight: 700; line-height: 1.18; }
+.compat { background: var(--ok-bg); border: 1px solid var(--ok-line); border-left: 3px solid var(--ok); border-radius: 6px; padding: 12px 14px; }
+.compat dt { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ok); }
+.compat dd { color: var(--ink); }
+.compat dd::before { background: var(--ok); }
+.manual { background: var(--blue-soft); border: 1px solid var(--blue-line); border-left: 3px solid var(--blue); border-radius: 6px; padding: 12px 14px; color: var(--ink); font-size: 14.5px; }
+.manual a { color: var(--blue); }
+.quick { border-top: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.quick li { flex-direction: column-reverse; justify-content: flex-end; gap: 2px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 7px; background: var(--mist); }
+.quick li b { font: 700 16px/1.25 var(--sans); }
+.quick li span { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+/* dark buy box, as on the roadmap */
+.buy { position: relative; overflow: hidden; display: grid; gap: 12px; padding: 22px; border-radius: 14px; background: radial-gradient(120% 90% at 100% 0%, rgba(229,50,45,.28), transparent 55%), #0b0d10; color: #fff; border: 1px solid rgba(255,255,255,.08); box-shadow: var(--shadow); }
+.buy-k { justify-self: start; font: 700 11px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; background: var(--red); color: #fff; padding: 6px 9px; border-radius: 4px; }
+.buy-p { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin: 0; }
+.buy-p b { font: 800 clamp(38px, 3.6vw, 50px)/1 var(--sans); letter-spacing: -.01em; }
+.buy-p s { font-size: 18px; color: rgba(255,255,255,.55); }
+.buy-t { font-size: 14.5px; line-height: 1.5; color: rgba(255,255,255,.76); }
+.buy .tminus { color: rgba(255,255,255,.66); text-align: center; font-size: 13px; }
+.buy .tminus b { color: #fff; }
+.buy-x { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 8px; background: rgba(255,255,255,.04); }
+.buy-x > span { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--mfd); color: #06210e; font: 700 20px/1 var(--sans); }
+.buy-x b { display: block; font-size: 15px; font-weight: 600; }
+.buy-x small { font-size: 13.5px; color: rgba(255,255,255,.7); }
+.buy-w { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; font-size: 12px; font-weight: 600; }
+.buy-w em { font-style: normal; border: 1px solid rgba(255,255,255,.22); border-radius: 4px; padding: 5px 8px; }
+.buy-w em.later { border-style: dashed; color: rgba(255,255,255,.62); }
+.buy.c { justify-items: center; text-align: center; max-width: 560px; margin: 0 auto; padding: 28px; }
+.buy.c .buy-k { justify-self: center; } .buy.c .buy-p, .buy.c .buy-w, .buy-b { justify-content: center; }
+.buy-b { display: flex; flex-wrap: wrap; gap: 10px; }
+/* strips, info, lists */
+.badges ul { padding-block: 20px; gap: 12px; }
+.badges li { border: 1px solid var(--line); border-radius: 7px; background: var(--mist); padding: 12px 14px; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; font-size: 12px; letter-spacing: .08em; }
+.badges svg { width: 30px; height: 30px; stroke: #101010; }
+.badges { border-block: 0; }
+.info-grid > div { background: var(--mist); border: 1px solid var(--line); border-radius: 7px; padding: 16px 18px; }
+.info-grid h3 { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
+.info-grid p { font-size: 16px; font-weight: 600; color: var(--ink); }
+.info-grid a { color: var(--blue); }
+.req > div { border-radius: 6px; padding: 14px 16px; border-left-width: 3px; }
+.req .k { justify-self: start; font: 700 11px/1 var(--sans); letter-spacing: .08em; padding: 5px 7px; border-radius: 4px; }
+.req > div:nth-child(1) { background: var(--blue-soft); border-color: var(--blue-line); border-left-color: var(--blue); } .req > div:nth-child(1) .k { background: var(--blue); color: #fff; }
+.req > div:nth-child(2) { background: var(--ok-bg); border-color: var(--ok-line); border-left-color: var(--ok); } .req > div:nth-child(2) .k { background: var(--ok); color: #fff; }
+.req > div:nth-child(3) { background: var(--warn-bg); border-color: var(--warn-line); border-left-color: var(--warn); } .req > div:nth-child(3) .k { background: var(--warn); color: #fff; }
+.msn b em { background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok-line); }
+.panel-f h3 { font-size: 20px; letter-spacing: .03em; }
+.panel-f li::before { background: var(--blue); }
+.msn-h { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 44px; }
+.msn-h h3 { font-size: 22px; text-transform: uppercase; letter-spacing: .03em; } .msn-h h3 span { font-size: 14px; font-weight: 600; color: var(--mute); letter-spacing: .06em; margin-left: 6px; }
+.msn-h em, .needs b { font: 700 11px/1 var(--sans); font-style: normal; letter-spacing: .08em; text-transform: uppercase; background: var(--warn); color: #fff; padding: 6px 8px; border-radius: 4px; }
+.needs { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px 18px; align-items: center; margin-top: 14px; padding: 14px 16px; background: var(--warn-bg); border: 1px solid var(--warn-line); border-left: 3px solid var(--warn); border-radius: 6px; }
+.needs p { font-size: 15.5px; color: var(--ink); }
+.msn { margin-top: 16px; }
+@media (max-width: 760px) { .needs { grid-template-columns: minmax(0, 1fr); justify-items: start; } }
+.tape [hidden] { display: none; }
+.tape-shell { padding-block: 14px; padding-right: 18px; }
+.tape { width: 144px; }
+.vsi-box { left: 7px; right: -13px; height: 20px; font-size: 12.5px; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.liv-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); margin-top: 28px; align-items: start; }
+.liv-col { min-width: 0; }
+.liv-col h3 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); }
+.liv-split .liv-stage { margin-top: 12px; padding: clamp(14px, 2vw, 24px); }
+.liv-stage.art { background: rgb(178, 184, 191); }
+h1, h2, h3 { color: inherit; }
+button { font-family: inherit; }
+.liv-stage.art img { aspect-ratio: 930 / 340; }
+.liv-split .liv-name b { font-size: 18px; }
+.liv-split .liv-list { margin-top: 14px; gap: 6px; }
+.liv-split .liv-list button { font-size: 13px; padding: 0 11px; min-height: 34px; }
+@media (max-width: 900px) { .liv-split { grid-template-columns: minmax(0, 1fr); } }
+/* final call */
+.final .lede, .final .eyebrow, .history .lede, .flare .lede { color: var(--on-dark); }
+.final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
+.final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
+</style>
+
+<header class="bar" id="bar">
+  <div class="bar-in">
+    <a class="logo" href="#top" aria-label="Miltech Simulations"><img src="img/miltech_logo.png" width="1448" height="212" alt="Miltech Simulations"></a>
+    <nav aria-label="Store">
+      <a href="https://www.miltechsimulations.com/" target="_blank" rel="noopener">Aircraft</a>
+      <a href="https://www.miltechsimulations.com/" target="_blank" rel="noopener">Scenery</a>
+      <a href="https://www.miltechsimulations.com/" target="_blank" rel="noopener">Missions</a>
+      <a href="https://www.miltechsimulations.com/" target="_blank" rel="noopener">Carriers</a>
+      <a href="https://www.miltechsimulations.com/" target="_blank" rel="noopener">Bundles</a>
+      <a class="b" href="https://docs.miltechsimulations.com/" target="_blank" rel="noopener">Docs</a>
+      <a class="b" href="https://miltechsimulations.talkyard.net/" target="_blank" rel="noopener">Support</a>
+    </nav>
+    <span class="alt-pill" aria-hidden="true">ALT <b id="altPill">74,500</b> FT</span>
+    <a class="btn btn-light" href="#product">Buy</a>
+  </div>
+</header>
+
+<aside class="tape" aria-hidden="true">
+  <div class="tape-shell">
+    <div class="tape-head" id="tapeFL" hidden>FL745</div>
+    <div class="tape-row">
+      <div class="tape-frame">
+        <div class="tape-win" id="tapeWin"><div class="tape-strip" id="tapeStrip"></div></div>
+        <div class="tape-box" id="altBox">745</div>
+        <div class="tape-drum" id="altDrum"><span>10</span><span>00</span><span>90</span></div>
+      </div>
+      <div class="vsi" id="vsi">
+        <svg viewBox="0 0 34 100" preserveAspectRatio="none"><polygon points="1,1 16,1 33,36 33,64 16,99 1,99"/></svg>
+        <em style="top:5.0%">4</em><em style="top:12.5%">3</em><em style="top:21.0%">2</em><em style="top:31.0%">1</em><em style="top:40.0%">.5</em><em style="top:60.0%">.5</em><em style="top:69.0%">1</em><em style="top:79.0%">2</em><em style="top:87.5%">3</em><em style="top:95.0%">4</em>
+        <div class="vsi-bar" id="vsiBar"></div>
+        <div class="vsi-box" id="vsiBox">0</div>
+      </div>
+    </div>
+    <div class="tape-foot" hidden><b>29.92</b><span id="phase">CRUISE</span></div>
+  </div>
+</aside>
+
+<main>
+  <!-- 74,500 ft -->
+  <section class="hero bleed" id="top">
+    <img class="hero-img" id="heroImg" src="img/shot_6.webp" width="2400" height="1153" fetchpriority="high" alt="The U-2S with the dorsal SPAN antenna, high over a mountain range below a dark blue sky">
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <p class="kicker">For Microsoft Flight Simulator 2024</p>
+      <h1 class="hero-title"><span class="big">U-2</span><span class="sub">Spyplane</span></h1>
+      <p class="hero-tag">Some call it the hardest aircraft in the world to fly. Now it is time to test your skills.</p>
+      <p class="rel-chip"><span>Release</span><b>13 Nov · 14:00Z</b><i id="heroT">Release offer USD $36.99</i></p>
+      <div class="cta">
+        <a class="btn btn-light" href="#product">See the release offer</a>
+        <a class="btn btn-line" href="#history">Start with the story</a>
+      </div>
+    </div>
+    <div class="hero-facts">
+      <dl class="wrap facts-row">
+        <div><dt>Cruise altitude</dt><dd>72,000<small>FT</small></dd></div>
+        <div><dt>Wingspan</dt><dd>103<small>FT</small></dd></div>
+        <div><dt>Static thrust</dt><dd>17,792<small>LBF</small></dd></div>
+        <div><dt>Max weight</dt><dd>40,000<small>LB</small></dd></div>
+        <div><dt>Liveries</dt><dd>19</dd></div>
+      </dl>
+    </div>
+    <i class="mk" data-alt="74500" style="position:absolute;top:75%"></i>
+    <i class="mk" data-alt="72000" style="position:absolute;bottom:0"></i>
+  </section>
+
+  <!-- product box -->
+  <section class="product" id="product">
+    <div class="wrap product-grid">
+      <div class="media">
+        <button class="media-main" id="mediaMain" type="button" aria-label="Open the picture full screen">
+          <img width="1760" height="1120" id="mediaImg" src="img/c_9.webp" alt="The U-2S from above, with superpods and the dorsal antenna, over cloud">
+        </button>
+        <div class="thumbs" id="thumbs"></div>
+      </div>
+      <div class="buybox">
+        <p class="vendor">Miltech Simulations</p>
+        <h2 class="ptitle">Miltech Simulations U-2 Spyplane for MSFS 2024</h2>
+        <div class="buy">
+          <span class="buy-k">Release offer</span>
+          <p class="buy-p"><b>USD $36.99</b><s>$39.99</s></p>
+          <p class="buy-t">The U-2S now. The U-2R and ER-2 come free when they are released.</p>
+          <a class="btn btn-light btn-block" id="addCart" href="https://www.miltechsimulations.com/products/miltech-simulations-u2-spyplane" target="_blank" rel="noopener" aria-disabled="true">Available 13 Nov · 14:00Z</a>
+          <p class="tminus" id="tminus">Releases 13 November 2026, 14:00Z</p>
+          <div class="buy-x"><span aria-hidden="true">+</span><div><b>Tonopah Test Range &amp; Area 51</b><small>Add it for USD $9.99 more when you buy the U-2.</small></div></div>
+          <p class="buy-w"><em>MiltechSimulations.com</em><em>iniBuilds store</em><em class="later">MSFS Marketplace · soon after</em></p>
+        </div>
+        <dl class="compat"><dt>Simulator compatibility</dt><dd>MSFS 2024: Fully compatible</dd></dl>
+        <p class="manual">It is highly recommended that you read the manual before using the product. The manual is available at <a href="https://docs.miltechsimulations.com/" target="_blank" rel="noopener">docs.miltechsimulations.com</a>.</p>
+        <ul class="quick">
+          <li><span>At release</span><b>U-2S digital cockpit</b></li>
+          <li><span>Free update</span><b>U-2R and ER-2</b></li>
+          <li><span>Sensors</span><b>ASARS-2 / SYERS-2A / OBC</b></li>
+          <li><span>Sceneries</span><b>4 included</b></li>
+          <li><span>Missions</span><b>7 included</b></li>
+          <li><span>Liveries</span><b>19 U-2S</b></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="badges" aria-label="Highlights">
+    <ul class="wrap">
+      <li><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="8" width="30" height="20" rx="2"/><path d="M14 33h12M20 28v5"/></svg>3 variants, U-2R and ER-2 free after release</li>
+      <li><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 22h22l6-8M14 22l-4 8M24 22l2 8M18 22V12h4"/></svg>19 liveries included</li>
+      <li><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M10 6h16l6 6v22H10z M26 6v6h6 M15 19h12M15 24h12M15 29h8"/></svg>4 sceneries and 7 missions</li>
+      <li><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 26h30v4H5z M9 26l3-7h14l4 7 M13 30v3M27 30v3"/><circle cx="20" cy="12" r="3"/></svg>Chase car and ground crew</li>
+    </ul>
+  </section>
+
+  <!-- intro -->
+  <section class="sec" id="about">
+    <div class="wrap intro-grid">
+      <div class="intro-copy">
+        <p class="eyebrow"><span class="fl">FL700</span>The aircraft</p>
+        <h2>A glider with a jet engine.</h2>
+        <i class="mk" data-alt="70000"></i>
+      </div>
+      <div class="intro-copy">
+        <p>The U-2 is a single-engine, single-seat, high-altitude reconnaissance aircraft. Its glider-like wing lets it cruise above 70,000 feet for many hours, and it is one of the most demanding aircraft in the world to land.</p>
+        <p>The Miltech Simulations U-2S brings the current US Air Force aircraft to Microsoft Flight Simulator 2024: a glass cockpit with three multi-function displays, an INS that has to be aligned before it will steer you anywhere, and custom fuel, electrical, hydraulic, oxygen, autopilot and lift spoiler systems.</p>
+        <p>It sits on a bicycle landing gear, balances on detachable pogo wheels, and on final a second pilot in a chase car talks you down to the runway. Start cold and dark, or let the EFB set the aircraft up for you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- history gallery -->
+  <section class="history bleed" id="history">
+    <div class="his-hero">
+      <img width="1600" height="769" src="img/x_sunset.webp" loading="lazy" alt="The U-2 in silhouette against the last light at high altitude">
+      <div class="wrap">
+        <p class="eyebrow"><span class="fl">FL680</span>Gallery · 1955 to today</p>
+        <h2>Higher than anyone could follow.</h2>
+        <i class="mk" data-alt="68000"></i>
+        <p class="lede">In 1954, the United States needed photographs of the Soviet Union. No fighter and no missile could reach 70,000 feet. So the answer was an aircraft that flew above all of them. Seventy years later, it still flies.</p>
+      </div>
+    </div>
+    <div class="wrap">
+      <ol class="rail" id="rail" tabindex="0" aria-label="U-2 history, 1955 to 2026" style="list-style:none;margin:0">
+          <li class="plq"><span class="y">1955</span><span class="n">No. 01 · Nevada</span><h3>A secret first flight</h3><p>The U-2 flies for the first time at Groom Lake, a test site in the Nevada desert built for the program.</p><em>In the sim: Groom Lake, 1960s</em></li>
+          <li class="plq"><span class="y">1956</span><span class="n">No. 02 · Soviet Union</span><h3>Over the Soviet Union</h3><p>The CIA starts flights over the Soviet Union. The photographs show far fewer Soviet bombers than Washington feared.</p></li>
+          <li class="plq"><span class="y">1960</span><span class="n">No. 03 · Sverdlovsk</span><h3>Shot down</h3><p>On 1 May, a missile hits the U-2 of Francis Gary Powers. Two weeks later, a summit between Eisenhower and Khrushchev collapses.</p></li>
+          <li class="plq"><span class="y">1962</span><span class="n">No. 04 · Cuba</span><h3>Thirteen days</h3><p>U-2 photographs find Soviet missile sites in Cuba and start the Cuban Missile Crisis. On 27 October, Maj. Rudolf Anderson is shot down over the island.</p></li>
+          <li class="plq"><span class="y">1967</span><span class="n">No. 05 · U-2R</span><h3>A bigger aircraft</h3><p>A new airframe, about a third larger, with more fuel and more room for sensors.</p><em>In the sim: free update</em></li>
+          <li class="plq"><span class="y">1981</span><span class="n">No. 06 · NASA</span><h3>The science version</h3><p>Production starts again as the TR-1, and NASA receives the ER-2 for high-altitude research.</p><em>In the sim: free update</em></li>
+          <li class="plq"><span class="y">1994</span><span class="n">No. 07 · U-2S</span><h3>A new engine</h3><p>The fleet gets the GE F118 turbofan, lighter and more efficient than the old J75. This is the U-2S.</p><em>In the sim: the release aircraft</em></li>
+          <li class="plq"><span class="y">2023</span><span class="n">No. 08 · United States</span><h3>The balloon</h3><p>A U-2 flies above the Chinese surveillance balloon as it crosses the United States.</p><em>In the sim: a mission</em></li>
+          <li class="plq"><span class="y">2025</span><span class="n">No. 09 · Anniversary</span><h3>Seventy years</h3><p>The anniversary flight lasts 14 hours and covers 6,000 NM.</p></li>
+          <li class="plq now"><span class="y">2026</span><span class="n">No. 10 · Today</span><h3>Still flying</h3><p>The U.S. Air Force still flies the U-2S from Beale AFB in California, and from forward bases such as RAF Akrotiri and RAF Fairford.</p></li>
+          </ol>
+      <div class="hard">
+        <p class="eyebrow">Gallery · The aircraft</p>
+        <h2>Why pilots call it the hardest aircraft to fly.</h2>
+        <p class="lede">Think of a very long glider with a very big jet engine. Almost everything unusual about the U-2 comes from these facts.</p>
+        <div class="hard-grid">
+          <div class="six">
+            <div><b>103 ft</b><small>A glider’s wing</small><p>Much lift and very little drag. The aircraft floats, and it does not want to slow down or come down.</p></div>
+            <div><b>2 wheels</b><small>In a line</small><p>The pogos fall away on takeoff. From then on, the pilot balances the aircraft like a bicycle.</p></div>
+            <div><b>½</b><small>Of the weight is fuel</small><p>The aircraft that lands is nearly a different aircraft from the one that took off.</p></div>
+            <div><b>None</b><small>Automatic help</small><p>No autothrottle, no automatic spoilers, no antiskid and no differential brakes.</p></div>
+          </div>
+          <figure class="cc">
+            <svg viewBox="0 0 640 284" role="img" aria-label="The coffin corner: the stall speed and the speed limit meet near the top of the climb">
+              <defs><linearGradient id="ccg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#c8a46a" stop-opacity=".22"/><stop offset="1" stop-color="#c8a46a" stop-opacity=".02"/></linearGradient></defs>
+              <g stroke="rgba(255,255,255,.08)"><line x1="90" y1="40" x2="610" y2="40"/><line x1="90" y1="110" x2="610" y2="110"/><line x1="90" y1="180" x2="610" y2="180"/><line x1="90" y1="250" x2="610" y2="250"/></g>
+              <g fill="#8b929c" font-size="12" font-family="Jost,Arial,sans-serif"><text x="80" y="44" text-anchor="end">82,000</text><text x="80" y="114" text-anchor="end">75,000</text><text x="80" y="184" text-anchor="end">65,000</text><text x="80" y="254" text-anchor="end">45,000</text></g>
+              <path d="M180 250 C190 180 205 110 262 40 C330 110 430 180 560 250 Z" fill="url(#ccg)"/>
+              <path d="M180 250 C190 180 205 110 262 40" fill="none" stroke="#66cbe0" stroke-width="2.5"/>
+              <path d="M262 40 C330 110 430 180 560 250" fill="none" stroke="#e5322d" stroke-width="2.5"/>
+              <circle cx="262" cy="40" r="6" fill="#c8a46a"/>
+              <g font-family="Jost,Arial,sans-serif">
+                <text x="276" y="36" fill="#c8a46a" font-size="14" font-weight="700" letter-spacing="1.5">COFFIN CORNER</text>
+                <text x="150" y="232" fill="#66cbe0" font-size="13" font-weight="600" text-anchor="end">Stall</text>
+                <text x="566" y="236" fill="#ff7a75" font-size="13" font-weight="600">Speed limit</text>
+                <line x1="218" y1="110" x2="340" y2="110" stroke="#fff" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <text x="279" y="102" fill="#fff" font-size="13" font-weight="600" text-anchor="middle">about 16 kt</text>
+                <line x1="193" y1="180" x2="440" y2="180" stroke="#fff" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <text x="316" y="172" fill="#fff" font-size="13" font-weight="600" text-anchor="middle">about 47 kt</text>
+                <text x="610" y="276" fill="#6f7782" font-size="12" text-anchor="end">Indicated airspeed →</text>
+              </g>
+            </svg>
+            <figcaption>As the U-2 climbs, the stall speed and the speed limit close in. Near the top they meet. In the cruise, the U-2 flies only 6 to 8 knots below its red line. <span>Schematic for a light aircraft, late in a long flight, on a standard day.</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- airframe -->
+  <section class="sec airframe bleed" id="aircraft">
+    <div class="wrap plan-grid">
+      <div>
+        <p class="eyebrow"><span class="fl">FL660</span>The airframe</p>
+        <h2 style="margin-top:16px">103 feet of wing.</h2>
+        <i class="mk" data-alt="66000"></i>
+        <p class="lede" style="margin-top:16px">Long, thin and light, the wing carries the U-2 above 70,000 feet. Close to the ground it floats, and it keeps flying long after you want it on the runway.</p>
+        <dl class="specs">
+          <div><dt>Wing area</dt><dd>1,000 sq ft</dd></div>
+          <div><dt>Max weight</dt><dd>40,000 lb</dd></div>
+          <div><dt>Fuel</dt><dd>2,917 US gal</dd></div>
+          <div><dt>Static thrust</dt><dd>17,792 lbf</dd></div>
+          <div><dt>Stall, up / full flap</dt><dd>94 / 88 KIAS</dd></div>
+          <div><dt>Take-off / climb</dt><dd>95 / 160 KIAS</dd></div>
+        </dl>
+        <p class="small" style="margin-top:12px">Reference numbers from the U-2S user guide.</p>
+      </div>
+      <figure class="plan-art">
+        <img src="img/planform.webp" width="1800" height="1135" loading="lazy" alt="Top view of the U-2S: a narrow fuselage, a very long straight wing and a small tailplane">
+        <svg class="dims" id="dims" viewBox="0 0 1800 1135" aria-hidden="true">
+          <line class="ext" x1="34" y1="620" x2="34" y2="300"/>
+          <line class="ext" x1="1766" y1="620" x2="1766" y2="300"/>
+          <path class="ln" pathLength="1" d="M900 330 H34 M900 330 H1766"/>
+          <path class="ln" pathLength="1" d="M34 330 l22 -12 v24 z M1766 330 l-22 -12 v24 z" style="fill:var(--char)"/>
+          <rect class="tag" x="250" y="292" width="390" height="58" rx="6"/>
+          <text x="268" y="334">103 FT &middot; 31.4 M</text>
+        </svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- chapter: FL620 -->
+  <section class="chapter bleed">
+    <img src="img/shot_4.webp" width="2400" height="1153" loading="lazy" alt="The wing and the curve of the earth seen through the canopy, far above the clouds">
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">FL620</span>Above the weather</p>
+      <h2>The curve of the earth, off the wingtip.</h2>
+      <i class="mk" data-alt="62000"></i>
+      <p>The U-2 lives above 70,000 feet, where the sky overhead turns dark and the weather is far below.</p>
+    </div>
+  </section>
+
+  <!-- features -->
+  <section class="sec" id="features">
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">FL550</span>Features</p>
+      <h2 style="margin-top:16px">Built for the whole flight.</h2>
+      <i class="mk" data-alt="55000"></i>
+      <div class="tabs" role="tablist" aria-label="Feature areas">
+        <button class="tab" role="tab" id="t-cockpit" aria-controls="p-cockpit" aria-selected="true">Cockpit</button>
+        <button class="tab" role="tab" id="t-nav" aria-controls="p-nav" aria-selected="false" tabindex="-1">Navigation</button>
+        <button class="tab" role="tab" id="t-sys" aria-controls="p-sys" aria-selected="false" tabindex="-1">Systems</button>
+        <button class="tab" role="tab" id="t-sens" aria-controls="p-sens" aria-selected="false" tabindex="-1">Sensors &amp; EFB</button>
+        <button class="tab" role="tab" id="t-ground" aria-controls="p-ground" aria-selected="false" tabindex="-1">Ground ops</button>
+        <button class="tab" role="tab" id="t-ext" aria-controls="p-ext" aria-selected="false" tabindex="-1">Exterior</button>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-cockpit" aria-labelledby="t-cockpit">
+        <div><h3>Cockpit</h3><ul>
+          <li>A glass cockpit with three multi-function displays, an up-front control display, a backup control display unit and a standby flight display.</li>
+          <li>Each MFD runs its own power-on test, then waits for the avionics processor. Pick a fast start or the realistic two minutes in the EFB.</li>
+          <li>Cold and dark really is dark: battery, generators, fuel pumps, lights, oxygen, avionics and the autopilot channels off, canopy open.</li>
+          <li>Battery power alone runs every display and radio. The generators or ground power keep it that way.</li>
+          <li>A throttle with an OFF / IDLE stop, and speedbrakes and wing lift spoilers on separate controls.</li>
+        </ul></div>
+        <figure><img width="2400" height="1153" src="img/shot_2.webp" loading="lazy" alt="Pilot's view of the U-2S cockpit above a deck of clouds"><figcaption>Above the clouds, in the sim.</figcaption></figure>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-nav" aria-labelledby="t-nav" hidden>
+        <div><h3>Navigation</h3><ul>
+          <li>The INS has to be aligned from cold and dark: 22 minutes for a full alignment, 5 for a limited one, or shorten it in the EFB.</li>
+          <li>In-flight alignment, GPS updating and manual position updates.</li>
+          <li>The steering computer flies the active destination point file, the route on the MFD NAV / DPS page and the map.</li>
+          <li>F/T, T/T, T/F, TTD and TFD steering, direct steer, overfly and orbits.</li>
+          <li>Flight director, miles and time to go, and the autopilot NAV mode all follow the destination points.</li>
+          <li>Enter and edit routes on the MFD, the UFCD DP page or the BCDU.</li>
+        </ul></div>
+        <figure class="screen"><img src="img/scr_mfd_pfd.png" width="778" height="1024" loading="lazy" alt="The primary flight display with the horizontal situation display below it"><figcaption>PFD captured in the sim.</figcaption></figure>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-sys" aria-labelledby="t-sys" hidden>
+        <div><h3>Systems</h3><ul>
+          <li>Five fuel tanks: two wing tanks, two auxiliary tanks and the sump that feeds the engine. Cross-transfer to balance the wings, or dump fuel.</li>
+          <li>Electrical power from the battery and generators, with essential and monitored buses.</li>
+          <li>Hydraulics, and a gear warning whenever the gear is up in the landing configuration.</li>
+          <li>Liquid oxygen, cabin pressure and a canopy seal you set before takeoff. Lose the cabin at altitude and hypoxia sets in.</li>
+          <li>Engine start with a pneumatic starting cart. In flight, the throttle AIRSTART button fires the emergency start system.</li>
+          <li>Autopilot with pitch, roll and yaw channels, gust control and automatic stall strips.</li>
+        </ul></div>
+        <figure class="screen"><img src="img/scr_mfd_perf.png" width="778" height="1024" loading="lazy" alt="The PERF page with engine, oil, hydraulic, fuel, cabin and oxygen readouts"><figcaption>PERF page captured in the sim.</figcaption></figure>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-sens" aria-labelledby="t-sens" hidden>
+        <div><h3>Sensors &amp; EFB</h3><ul>
+          <li>Three sensor noses: ASARS-2, SPAN or IR/EO, plus superpods and the dorsal SPAN antenna. Change them in the EFB on the ground or in flight; the weights go into the payload.</li>
+          <li>Camera and radar pages drawn from live map imagery and terrain data while you are online.</li>
+          <li>An electronic warfare system with its own MFD page, a threat history map and a self-test.</li>
+          <li>The U-2 EFB app: aircraft state presets (Cold and Dark, Ready to Taxi, Ready for Takeoff), INS alignment time, avionics start-up time and ground starting air.</li>
+          <li>31 normal checklists on the MFD EFA pages, from a cold and dark cockpit to shutdown.</li>
+        </ul></div>
+        <figure><img width="2400" height="1153" src="img/shot_5.webp" loading="lazy" alt="The cockpit at dawn with the EFB tablet and the lit displays"><figcaption>The U-2 EFB at dawn.</figcaption></figure>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-ground" aria-labelledby="t-ground" hidden>
+        <div><h3>Ground ops</h3><ul>
+          <li>A bicycle landing gear: one main gear, a steerable tailwheel and two pogo outriggers that hold the wings level.</li>
+          <li>On the takeoff roll each pogo falls away by itself once the wing carries it, between 60 and 88 knots.</li>
+          <li>After landing, stop and wait: the ground crew fits both pogos and levels the aircraft in about half a minute.</li>
+          <li>A chase car that joins you on final and calls your height in the flare.</li>
+          <li>Pull every gear pin and pogo flag with one click in the walkaround, or with the EFB presets.</li>
+          <li>Ground power and starting air on request from the EFB.</li>
+        </ul></div>
+        <figure><img width="1760" height="1120" src="img/c_4.webp" loading="lazy" alt="The U-2S on the ramp with the crew van and a ground cart"><figcaption>On the ramp, in the sim.</figcaption></figure>
+      </div>
+      <div class="panel-f" role="tabpanel" id="p-ext" aria-labelledby="t-ext" hidden>
+        <div><h3>Exterior</h3><ul>
+          <li>Panel lines, rivet rows, stencils and antennas across the whole airframe, in physically based materials.</li>
+          <li>Sensor fits that change the silhouette: ASARS-2, SPAN and IR/EO noses, superpods and the dorsal antenna.</li>
+          <li>Navigation, beacon, landing and taxi lights.</li>
+          <li>The GE F118 turbofan with 17,792 lbf of static thrust.</li>
+          <li>19 liveries, including the default USAF scheme.</li>
+        </ul></div>
+        <figure><img width="2400" height="1153" src="img/shot_9.webp" loading="lazy" alt="Head-on view of the U-2S with the pilot under the canopy"><figcaption>Head-on, in the sim.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- cockpit band -->
+  <section class="sec cockpit dark bleed" id="cockpit">
+    <div class="wrap">
+      <div class="cockpit-head">
+        <p class="eyebrow"><span class="fl">FL460</span>Glass cockpit</p>
+        <h2>Three screens, two keypads, one pilot.</h2>
+        <i class="mk" data-alt="46000"></i>
+        <p class="lede">Pick a page for the center MFD, or tap any screen to page it. Every screen below is a capture from the sim.</p>
+      </div>
+      <div class="panel" id="panel">
+        <img src="img/s_ov_front.webp" width="1800" height="1154" loading="lazy" alt="The U-2S main instrument panel with three large displays, a keypad and the standby gauges">
+        <button class="scr scr-l" type="button" data-pages="PERF,ICAW,INIT" aria-label="Left MFD, next page"><img width="778" height="1024" src="img/scr_mfd_perf.png" alt="Left MFD showing the PERF engine and fuel page"></button>
+        <button class="scr scr-c" type="button" data-pages="PFD,EFA,PERF,INIT,ICAW" aria-label="Center MFD, next page"><img width="778" height="1024" src="img/scr_mfd_pfd.png" alt="Center MFD showing the primary flight display"></button>
+        <button class="scr scr-r" type="button" data-pages="EFA,INIT,ICAW" aria-label="Right MFD, next page"><img width="778" height="1024" src="img/scr_mfd_efa.png" alt="Right MFD showing the electronic flight aid checklist page"></button>
+        <div class="scr scr-u"><img width="512" height="512" src="img/scr_ufcd_nav.png" alt="Up-front control display on its NAV page"></div>
+      </div>
+      <div class="pager" role="group" aria-label="Center MFD page">
+        <span class="lbl">Center MFD</span>
+        <button class="chip" type="button" data-page="PFD" aria-pressed="true">PFD</button>
+        <button class="chip" type="button" data-page="EFA" aria-pressed="false">EFA</button>
+        <button class="chip" type="button" data-page="PERF" aria-pressed="false">PERF</button>
+        <button class="chip" type="button" data-page="INIT" aria-pressed="false">INIT</button>
+        <button class="chip" type="button" data-page="ICAW" aria-pressed="false">ICAW</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- sensors -->
+  <section class="sec" id="sensors">
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">FL420</span>Sensors</p>
+      <h2 style="margin-top:16px">Three sensors, live from real map data.</h2>
+      <i class="mk" data-alt="42000"></i>
+      <p class="lede" style="margin-top:14px">The U-2 exists to carry sensors. Ours has the three of the real U-2S. Fit one on the tablet, start it from the cockpit, and see its picture on the displays. With the datalink on, you can save your captures to the Datalink Portal.</p>
+      <div class="cards3">
+        <article class="cd"><button class="zoom" type="button" data-zoom="img/x_rdr.webp" data-cap="ASARS-2 radar picture" aria-label="Open the picture: ASARS-2 radar picture"><img width="460" height="520" src="img/x_rdr.webp" loading="lazy" alt="ASARS-2 radar picture"></button><div class="cd-tx"><small>Nose</small><h3>ASARS-2 radar</h3><p>A radar map out to 320 NM, or a close-up spot down to 0.1 NM where you can see parked aircraft and their shadows. Day, night and cloud make no difference.</p></div></article>
+        <article class="cd"><button class="zoom" type="button" data-zoom="img/x_cam.webp" data-cap="SYERS-2A camera picture" aria-label="Open the picture: SYERS-2A camera picture"><img width="460" height="520" src="img/x_cam.webp" loading="lazy" alt="SYERS-2A camera picture"></button><div class="cd-tx"><small>Nose</small><h3>SYERS-2A camera</h3><p>Real satellite imagery in five bands, with zoom from 0.5x to 73x. Aim it up to 85° to the side, and it stays locked on the spot as you fly past.</p></div></article>
+        <article class="cd"><button class="zoom" type="button" data-zoom="img/x_obc.webp" data-cap="Optical bar camera film frame" aria-label="Open the picture: Optical bar camera film frame"><img width="520" height="684" src="img/x_obc.webp" loading="lazy" alt="Optical bar camera film frame"></button><div class="cd-tx"><small>Q-bay</small><h3>Optical bar camera</h3><p>Grainy black-and-white panoramic film, about 1,600 frames. The camera is fixed, so you fly straight lines over the target and watch the frame counter.</p></div></article>
+      </div>
+      <p class="small" style="margin-top:14px">The sensor pictures need an internet connection.</p>
+    </div>
+  </section>
+
+  <!-- chapter: FL380 -->
+  <section class="chapter bleed">
+    <img src="img/shot_3.webp" width="2400" height="1153" loading="lazy" alt="The U-2S in silhouette against a sunset band at altitude">
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">FL380</span>Endurance</p>
+      <h2>Long days, longer nights.</h2>
+      <i class="mk" data-alt="38000"></i>
+      <p>2,917 US gallons in five tanks keep the U-2 up for hours. Keep the sump fed and the wings balanced, and it will still be flying at dusk.</p>
+    </div>
+  </section>
+
+  <!-- walk around -->
+  <section class="sec" id="spin">
+    <i class="mk" data-alt="32000"></i>
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">FL320</span>Walk around it</p>
+      <h2 style="margin-top:16px">Every panel, every stencil.</h2>
+      <div class="walk">
+        <figure><button class="zoom" type="button" data-zoom="img/c_1.webp" data-cap="Panel lines, stencils and chalk art behind the cockpit" aria-label="Open the picture"><img width="1760" height="1120" src="img/c_1.webp" loading="lazy" alt="Close view of the fuselage with stencils and chalk art"></button><figcaption><h3>Built panel by panel</h3><p>Panel lines, rivet rows, stencils and antennas across the whole airframe, in physically based materials that hold up close.</p></figcaption></figure>
+        <figure><button class="zoom" type="button" data-zoom="img/c_9.webp" data-cap="Superpods and the dorsal antenna" aria-label="Open the picture"><img width="1760" height="1120" src="img/c_9.webp" loading="lazy" alt="The U-2S from above with superpods and the dorsal antenna"></button><figcaption><h3>Sensor fits you can see</h3><p>Sensor noses, superpods and the dorsal antenna change the shape of the aircraft. Swap them in the U-2 EFB.</p></figcaption></figure>
+        <figure><button class="zoom" type="button" data-zoom="img/c_6.webp" data-cap="Head-on, in flight" aria-label="Open the picture"><img width="1760" height="1120" src="img/c_6.webp" loading="lazy" alt="Head-on view of the U-2S in flight"></button><figcaption><h3>GE F118 turbofan</h3><p>17,792 lbf of static thrust, an emergency airstart system and a throttle with a real OFF / IDLE stop.</p></figcaption></figure>
+        <figure><button class="zoom" type="button" data-zoom="img/c_3.webp" data-cap="From above, low over the desert" aria-label="Open the picture"><img width="1760" height="1120" src="img/c_3.webp" loading="lazy" alt="The U-2S from directly above, low over the desert"></button><figcaption><h3>19 liveries</h3><p>The U-2S liveries come with the aircraft. See them further down the page.</p></figcaption></figure>
+      </div>
+    </div>
+    <i class="mk" data-alt="24000" style="position:absolute;bottom:0"></i>
+  </section>
+
+
+  <!-- chapter: FL140 -->
+  <section class="chapter bleed">
+    <img src="img/shot_10.webp" width="2400" height="1153" loading="lazy" alt="The U-2S flying over a carrier group at sea">
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">FL140</span>The mission</p>
+      <h2>Anywhere the mission goes.</h2>
+      <i class="mk" data-alt="14000"></i>
+      <p>Pick the sensor fit in the EFB, load your destination points and fly the U-2S anywhere in Microsoft Flight Simulator 2024.</p>
+    </div>
+  </section>
+
+  <!-- sceneries and missions -->
+  <section class="sec" id="world">
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">11,000 FT</span>Included</p>
+      <h2 style="margin-top:16px">Four sceneries, seven missions.</h2>
+      <i class="mk" data-alt="11000"></i>
+      <div class="cards4">
+        <article class="cd"><div class="cd-tx"><small>KXTA · Nevada</small><h3>Groom Lake, 1960s</h3><p>The test site where the U-2 first flew, as it was in the 1960s.</p></div></article>
+        <article class="cd"><div class="cd-tx"><small>EGVA · England</small><h3>RAF Fairford</h3><p>The European base of the U-2, and the home of the Royal International Air Tattoo airshow.</p></div></article>
+        <article class="cd"><div class="cd-tx"><small>LCRA · Cyprus</small><h3>RAF Akrotiri</h3><p>The U-2 base by the sea for operations over the Middle East.</p></div></article>
+        <article class="cd"><div class="cd-tx"><small>CIA1 · Lapland</small><h3>CIA Nordic Base</h3><p>A fictional base, made for the simulator, in the far north of Europe.</p></div></article>
+      </div>
+      <div class="shots"><button type="button" data-zoom="img/x_sc1.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 1"><img width="1100" height="619" src="img/x_sc1.webp" loading="lazy" alt="Scenery included with the U-2, picture 1"></button><button type="button" data-zoom="img/x_sc2.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 2"><img width="1100" height="619" src="img/x_sc2.webp" loading="lazy" alt="Scenery included with the U-2, picture 2"></button><button type="button" data-zoom="img/x_sc3.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 3"><img width="1100" height="619" src="img/x_sc3.webp" loading="lazy" alt="Scenery included with the U-2, picture 3"></button><button type="button" data-zoom="img/x_sc4.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 4"><img width="1100" height="619" src="img/x_sc4.webp" loading="lazy" alt="Scenery included with the U-2, picture 4"></button><button type="button" data-zoom="img/x_sc5.webp" data-cap="Scenery included with the U-2" aria-label="Open scenery picture 5"><img width="1100" height="619" src="img/x_sc5.webp" loading="lazy" alt="Scenery included with the U-2, picture 5"></button></div>
+      <div class="msn-h"><h3>U-2 Spyplane Mission Pack <span>7 missions</span></h3></div>
+      <div class="needs"><b>Mission Hub required</b><p>You must have Miltech Mission Hub to fly these missions. Mission Hub is a separate Miltech product. Without it, the aircraft and the sceneries work fully, but the missions do not start.</p><a class="btn btn-dark" id="mhubAdd" data-code="" data-off="" href="https://www.miltechsimulations.com/cart/add?id=51574093578543&amp;quantity=1" target="_blank" rel="noopener"><span aria-hidden="true">+</span> Add Mission Hub to the cart · USD $15.99</a></div>
+      <ol class="msn"><li><b>U-2 Familiarization <em>Start here</em></b><span>Your first solo, with a handling circuit and a low approach.</span><small>Groom Lake</small></li><li><b>NASA Terrain Study</b><span>Terrain lines over Monument Valley and the San Juan area.</span><small>Groom Lake</small></li><li><b>NASA Grand Canyon Survey</b><span>Three science lines along the Grand Canyon, west to east.</span><small>Palmdale</small></li><li><b>UFO Investigation, Roswell</b><span>Follow unexplained radar returns from Nevada to New Mexico.</span><small>Groom Lake</small></li><li><b>Operation Dark Skies</b><span>North Korea, 5 April 1997. Four targets, straight passes.</span><small>Osan AB</small></li><li><b>Chinese Surveillance Balloon</b><span>Two passes beside a balloon at 64,000 ft.</span><small>Patrick SFB</small></li><li><b>Iran Reconnaissance</b><span>Camera passes over Fordow, Natanz and Isfahan.</span><small>RAF Akrotiri</small></li></ol>
+      <p class="small" style="margin-top:12px">The missions are loosely based on real events, or entirely fictional.</p>
+    </div>
+  </section>
+
+  <!-- liveries -->
+  <section class="sec liveries bleed" id="liveries">
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">8,000 FT</span>Liveries</p>
+      <h2 style="margin-top:16px">19 liveries included.</h2>
+      <i class="mk" data-alt="8000"></i>
+      <p class="lede" style="margin-top:14px">Every livery below ships with the aircraft, together with the default USAF scheme.</p>
+      <div class="liv-split">
+        <div class="liv-col">
+          <h3>Liveries</h3>
+          <div class="liv-stage">
+            <img id="livImg" src="img/liv/u2s-usaf-801066.webp" width="930" height="340" loading="lazy" alt="Side view of the U-2S in the USAF 80-1066 livery">
+            <div class="liv-name"><b id="livName">USAF 80-1066</b><span id="livIdx">01 / 17</span></div>
+          </div>
+          <div class="liv-list" id="livList" role="group" aria-label="Choose a livery"></div>
+        </div>
+        <div class="liv-col">
+          <h3>Nose art and SPAN art</h3>
+          <div class="liv-stage art">
+            <img id="artImg" src="img/art_nose_801069.webp" width="1300" height="470" loading="lazy" alt="Nose art of USAF 80-1069">
+            <div class="liv-name"><b id="artName">Nose art · USAF 80-1069</b><span id="artIdx">01 / 04</span></div>
+          </div>
+          <div class="liv-list" id="artList" role="group" aria-label="Choose an artwork"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- landing -->
+  <section class="flare bleed" id="mobile">
+    <i class="mk" data-alt="1500"></i>
+    <i class="mk" data-alt="12" style="position:absolute;top:52%"></i>
+    <div class="flare-stage">
+      <img class="flare-bg" id="flareBg" src="img/shot_1.webp" width="2400" height="1153" alt="The U-2S low over a tree line with the gear down on final approach">
+      <div class="wrap flare-in">
+        <div class="flare-copy">
+          <p class="eyebrow"><span class="fl">1,500 FT</span>Mobile</p>
+          <h2>You won't land it alone.</h2>
+          <p class="lede">Real U-2 pilots are talked down by a second pilot in a chase car. Yours shows up by itself. On final, with the gear down, flaps out and below 1,500 feet, the car joins behind the threshold and calls your height in the flare. Drift off the centerline and you will hear about it.</p>
+        </div>
+        <div class="callout" aria-live="off">
+          <span class="word" id="word">On final</span>
+          <span class="hat">HEIGHT <b id="hat">1500</b> FT</span>
+        </div>
+      </div>
+    </div>
+    <i class="mk" data-alt="0" style="position:absolute;bottom:0"></i>
+  </section>
+
+  <!-- two releases -->
+  <section class="sec airframe bleed" id="releases">
+    <div class="wrap">
+      <p class="eyebrow"><span class="fl">0 FT</span>What you get</p>
+      <h2 style="margin-top:16px">Two releases, one price.</h2>
+      <div class="rel2">
+        <article class="rc d">
+          <div class="rc-im"><img width="1760" height="1120" src="img/c_4.webp" loading="lazy" alt="The U-2S on the ramp with the crew van"><span>Release 1 · 13 November</span></div>
+          <div class="rc-tx"><h3>U-2S</h3><p>The aircraft the U.S. Air Force flies today.</p><ul>
+            <li>Digital U-2S cockpit, GE F118 engine and 19 liveries</li>
+            <li>ASARS-2 radar, SYERS-2A camera and optical bar camera</li>
+            <li>Four sceneries, with the chase car, runway crew and pogo crew</li>
+            <li>Datalink Portal, and 7 missions in the U-2 Spyplane Mission Pack</li>
+          </ul></div>
+        </article>
+        <div class="plus" aria-hidden="true">+</div>
+        <article class="rc">
+          <div class="rc-im"><img width="1760" height="1120" src="img/c_1.webp" loading="lazy" alt="Close view of the U-2 fuselage"><span>Release 2 · Free update</span></div>
+          <div class="rc-tx"><h3>U-2R &amp; ER-2</h3><p>Expected in December, at no cost for every U-2 owner.</p><ul>
+            <li>U-2R with the classic round-dial cockpit and J75 engine</li>
+            <li>ER-2, NASA’s research version</li>
+            <li>5 to 10 more missions planned</li>
+            <li>Period chase cars</li>
+          </ul></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- product info -->
+  <section class="sec" id="info">
+    <div class="wrap">
+      <p class="eyebrow">Before you fly</p>
+      <h2 style="margin-top:16px">Product info and prerequisites.</h2>
+      <div class="info-grid">
+        <div><h3>Supported simulator</h3><p>Microsoft Flight Simulator 2024</p></div>
+        <div><h3>Platform</h3><p>PC at release. The console version can take longer.</p></div>
+        <div><h3>Included</h3><p>U-2S, 19 liveries, 4 sceneries, 7 missions</p></div>
+        <div><h3>Manual</h3><p><a href="https://docs.miltechsimulations.com/" target="_blank" rel="noopener">Documentation hub</a></p></div>
+      </div>
+      <div class="req">
+        <div><span class="k">Required</span><p>Microsoft Flight Simulator 2024, latest version. There is no MSFS 2020 version.</p></div>
+        <div><span class="k">Recommended</span><p>A joystick with two spare buttons, one for the speedbrakes and one for the lift spoilers.</p></div>
+        <div><span class="k">Optional</span><p>An internet connection for the camera and radar pages. The aircraft flies fine without it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- final call -->
+  <section class="final bleed" id="buy">
+    <div class="wrap final-head">
+      <p class="eyebrow">Miltech Simulations</p>
+      <h2>Ready when you are.</h2>
+      <p class="lede">Start cold and dark on the ramp, or let the EFB set the aircraft up for you. The U-2 releases on 13 November at 14:00Z.</p>
+    </div>
+    <div class="ground">
+      <img src="img/ground.webp" width="1800" height="1012" loading="lazy" alt="The U-2S seen from ahead and above">
+    </div>
+    <div class="wrap final-buy">
+      <div class="buy c">
+        <span class="buy-k">Release offer</span>
+        <p class="buy-p"><b>USD $36.99</b><s>$39.99</s></p>
+        <p class="buy-t">The U-2S now. The U-2R and ER-2 come free when they are released.</p>
+        <div class="buy-b">
+          <a class="btn btn-light" href="#product">Get the U-2</a>
+          <a class="btn btn-line" href="https://docs.miltechsimulations.com/" target="_blank" rel="noopener">Read the manual</a>
+        </div>
+        <p class="buy-w"><em>MiltechSimulations.com</em><em>iniBuilds store</em><em class="later">MSFS Marketplace · soon after</em></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div style="display:grid;gap:14px;align-content:start">
+        <img src="img/miltech_logo.png" width="1448" height="212" alt="Miltech Simulations">
+        <p class="small" style="max-width:40ch">Military aircraft, carriers, scenery and missions for Microsoft Flight Simulator.</p>
+      </div>
+      <div><h3>Support Center</h3><ul>
+        <li><a href="https://docs.miltechsimulations.com/" target="_blank" rel="noopener">Documentation Hub</a></li>
+        <li><a href="https://miltechsimulations.talkyard.net/" target="_blank" rel="noopener">Support Forum</a></li>
+      </ul></div>
+      <div><h3>Store</h3><ul>
+        <li><a href="https://www.miltechsimulations.com/" target="_blank" rel="noopener">All products</a></li>
+        <li><a href="#product">U-2 Spyplane</a></li>
+      </ul></div>
+    </div>
+    <div class="legal"><span>&copy; 2026 Miltech Simulations. For simulation use only.</span><span>Release offer until the U-2R and ER-2 arrive.</span></div>
+  </div>
+</footer>
+
+<dialog class="lb" id="lb" aria-label="Picture viewer">
+  <div class="lb-in">
+    <img width="2400" height="1153" id="lbImg" src="img/shot_7.webp" alt="">
+    <div class="lb-bar">
+      <button type="button" id="lbPrev">Previous</button>
+      <p id="lbCap"></p>
+      <button type="button" id="lbNext">Next</button>
+      <button type="button" id="lbClose">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  'use strict';
+  const root = document.documentElement;
+  root.classList.add('js');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s) => document.querySelector(s);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let vh = innerHeight, vw = innerWidth;
+
+  /* ---------- gallery: the in-sim shots ---------- */
+  const SHOTS = [
+    ['c_9', 'The U-2S from above, with superpods and the dorsal antenna, over cloud'],
+    ['c_4', 'The U-2S on the ramp with the crew van and a ground cart'],
+    ['c_11', 'The U-2S in silhouette against the sun at high altitude'],
+    ['c_2', 'The pilot in the yellow pressure suit, with the curve of the earth outside'],
+    ['c_5', 'The U-2S cockpit from above: yoke, three displays and the keypad'],
+    ['c_6', 'Head-on view of the U-2S in flight'],
+    ['c_3', 'The U-2S from directly above, low over the desert'],
+    ['c_1', 'Close view of the fuselage with chalk art behind the cockpit'],
+    ['c_8', 'The cockpit on the ground with the canopy open and the tablet fitted'],
+    ['c_10', 'The U-2S in level flight with a rocket trail in the distance'],
+    ['c_12', 'The U-2S parked outside the hangars at Groom Lake'],
+    ['c_7', 'A U-2S outside the hangar at RAF Fairford, under a rainbow'],
+    ['c_13', 'Transport aircraft on the ramp at one of the included sceneries'],
+    ['x_sc3', 'Included scenery: the U-2S on the ramp in front of the hangars'],
+    ['x_sc4', 'Included scenery: two U-2S aircraft on the ramp, seen from above'],
+    ['x_sc1', 'Included scenery: a passenger jet and a fuel truck on the ramp'],
+    ['x_sc2', 'Included scenery: a hangar with a rainbow behind it'],
+    ['x_sc5', 'Included scenery: the hangar line and a fuel trailer'],
+    [7, 'The U-2S banking over desert and cloud with superpods fitted'],
+    [6, 'The U-2S with the dorsal SPAN antenna, high over a mountain range'],
+    [2, "Pilot's view of the U-2S cockpit above a deck of clouds"],
+    [3, 'The U-2S in silhouette against a sunset band at altitude'],
+    [4, 'The wing and the curve of the earth seen through the canopy'],
+    [5, 'The cockpit at dawn with the EFB tablet and the lit displays'],
+    [9, 'Head-on view of the U-2S with the pilot under the canopy'],
+    [8, 'The U-2S from below, seen through frost on the glass'],
+    [10, 'The U-2S over a carrier group at sea'],
+    [1, 'The U-2S low over a tree line with the gear down on final']
+  ];
+  const file = (n) => 'img/' + (typeof n === 'number' ? 'shot_' + n : n);
+  const thumbs = $('#thumbs'), mediaImg = $('#mediaImg');
+  let cur = 0;
+  SHOTS.forEach(([n, alt], i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Show picture ' + (i + 1) + ': ' + alt);
+    b.setAttribute('aria-current', String(i === 0));
+    b.innerHTML = '<img src="' + file(n) + '_t.webp" loading="lazy" alt="">';
+    b.addEventListener('click', () => showShot(i));
+    thumbs.appendChild(b);
+  });
+  function showShot(i) {
+    cur = (i + SHOTS.length) % SHOTS.length;
+    mediaImg.src = file(SHOTS[cur][0]) + '.webp';
+    mediaImg.alt = SHOTS[cur][1];
+    Array.from(thumbs.children).forEach((b, k) => b.setAttribute('aria-current', String(k === cur)));
+    const tb = thumbs.children[cur]; if (tb) thumbs.scrollTo({ left: tb.offsetLeft - thumbs.clientWidth / 2 + tb.clientWidth / 2, behavior: 'smooth' });
+  }
+  const lb = $('#lb'), lbImg = $('#lbImg'), lbCap = $('#lbCap');
+  function lbShow(i) {
+    showShot(i);
+    lbImg.src = file(SHOTS[cur][0]) + '.webp'; lbImg.alt = SHOTS[cur][1];
+    lbCap.textContent = (cur + 1) + ' / ' + SHOTS.length + '  ' + SHOTS[cur][1];
+  }
+  $('#mediaMain').addEventListener('click', () => {
+    $('#lbPrev').hidden = $('#lbNext').hidden = false;
+    lbShow(cur);
+    if (typeof lb.showModal === 'function') lb.showModal();
+  });
+  $('#lbPrev').addEventListener('click', () => lbShow(cur - 1));
+  $('#lbNext').addEventListener('click', () => lbShow(cur + 1));
+  $('#lbClose').addEventListener('click', () => lb.close());
+  lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+  lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') lbShow(cur - 1); if (e.key === 'ArrowRight') lbShow(cur + 1); });
+
+  /* ---------- release state: 13 Nov 2026, 14:00Z ---------- */
+  const T0 = Date.UTC(2026, 10, 13, 14, 0, 0);
+  const addCart = $('#addCart'), tminus = $('#tminus'), heroT = $('#heroT');
+  addCart.addEventListener('click', (e) => { if (addCart.getAttribute('aria-disabled') === 'true') e.preventDefault(); });
+  function relTick() {
+    const d = T0 - Date.now();
+    if (d <= 0) {
+      addCart.removeAttribute('aria-disabled'); addCart.textContent = 'Add to cart';
+      tminus.innerHTML = '<b>Out now.</b> Release offer until the U-2R and ER-2 arrive.';
+      heroT.textContent = 'Out now · USD $36.99';
+      return;
+    }
+    const s = Math.floor(d / 1000), p = (n) => String(n).padStart(2, '0');
+    const txt = Math.floor(s / 86400) + 'd ' + p(Math.floor(s % 86400 / 3600)) + 'h ' + p(Math.floor(s % 3600 / 60)) + 'm ' + p(s % 60) + 's';
+    tminus.innerHTML = 'Releases in <b>' + txt + '</b>';
+    heroT.textContent = 'T-minus ' + txt;
+    setTimeout(relTick, 1000);
+  }
+  relTick();
+
+  /* ---------- zoom for the other pictures ---------- */
+  document.querySelectorAll('[data-zoom]').forEach((b) => b.addEventListener('click', () => {
+    lbImg.src = b.dataset.zoom; lbImg.alt = b.dataset.cap || ''; lbCap.textContent = b.dataset.cap || '';
+    $('#lbPrev').hidden = $('#lbNext').hidden = true;
+    if (typeof lb.showModal === 'function') lb.showModal();
+  }));
+
+  /* ---------- feature tabs ---------- */
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  function selectTab(t, focus) {
+    tabs.forEach((x) => {
+      const on = x === t;
+      x.setAttribute('aria-selected', String(on));
+      x.tabIndex = on ? 0 : -1;
+      document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (focus) t.focus();
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => selectTab(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') selectTab(tabs[(i + 1) % tabs.length], true);
+      if (e.key === 'ArrowLeft') selectTab(tabs[(i - 1 + tabs.length) % tabs.length], true);
+    });
+  });
+
+  /* ---------- liveries ---------- */
+  const LIV = [
+    ['USAF-801066', 'USAF 80-1066'], ['USAF-801067', 'USAF 80-1067'], ['USAF-801069', 'USAF 80-1069'], ['USAF-801070', 'USAF 80-1070'],
+    ['USAF-801070-WR', 'USAF 80-1070 WR'], ['USAF-801076', 'USAF 80-1076'], ['USAF-801077', 'USAF 80-1077'],
+    ['USAF-801085', 'USAF 80-1085'], ['USAF-801087', 'USAF 80-1087'], ['USAF-801092', 'USAF 80-1092'], ['USAF-801094', 'USAF 80-1094'],
+    ['USAF-801096', 'USAF 80-1096'], ['USAF-6810329', 'USAF 68-10329'], ['USAF-6810331', 'USAF 68-10331'], ['USAF-6810337', 'USAF 68-10337'],
+    ['9RW-6810331', '9RW 68-10331'], ['UN-801069', 'UN 80-1069']
+  ];
+  const ART = [['art_nose_801069', 'Nose art · USAF 80-1069', 'Nose art of USAF 80-1069'], ['art_nose_801077', 'Nose art · USAF 80-1077', 'Nose art of USAF 80-1077'], ['art_nose_801094', 'Nose art · USAF 80-1094', 'Nose art of USAF 80-1094'], ['art_span_801077', 'SPAN art · USAF 80-1077', 'Artwork on the SPAN antenna fairing of USAF 80-1077']];
+  const artList = $('#artList'), artImg = $('#artImg'), artName = $('#artName'), artIdx = $('#artIdx');
+  ART.forEach(([f, name, alt], i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = name; b.setAttribute('aria-pressed', String(i === 0));
+    b.addEventListener('click', () => {
+      artImg.src = 'img/' + f + '.webp'; artImg.alt = alt; artName.textContent = name;
+      artIdx.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(ART.length).padStart(2, '0');
+      Array.from(artList.children).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    });
+    artList.appendChild(b);
+  });
+  const livList = $('#livList'), livImg = $('#livImg'), livName = $('#livName'), livIdx = $('#livIdx');
+  LIV.forEach(([id, name], i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = name; b.setAttribute('aria-pressed', String(i === 0));
+    b.addEventListener('click', () => {
+      livImg.src = 'img/liv/u2s-' + id.toLowerCase() + '.webp';
+      livImg.alt = 'Side view of the U-2S in the ' + name + ' livery';
+      livName.textContent = name;
+      livIdx.textContent = String(i + 1).padStart(2, '0') + ' / ' + LIV.length;
+      Array.from(livList.children).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    });
+    livList.appendChild(b);
+  });
+
+  /* ---------- altitude tape ---------- */
+  const TOP = 80000, PX = 300;          // scale ends at 80,000 ft; 30 px for each 100 ft
+  const strip = $('#tapeStrip'), tapeWin = $('#tapeWin');
+  (() => {
+    let html = '';
+    for (let v = 0; v <= TOP; v += 100) {
+      const y = (TOP - v) / 1000 * PX;
+      html += '<i class="m" style="top:' + (y + PX / 20) + 'px"></i><i style="top:' + y + 'px"></i><span style="top:' + y + 'px">' + String(v % 1000).padStart(3, '0') + '</span>';
+    }
+    strip.innerHTML = html;
+    strip.style.height = (TOP / 1000 * PX) + 'px';
+  })();
+
+  /* ---------- vertical speed scale: follows how fast the page descends ---------- */
+  const vsiEl = $('#vsi'), vsiBar = $('#vsiBar'), vsiBox = $('#vsiBox');
+  const VSC = [[0, 0], [0.5, 0.2], [1, 0.38], [2, 0.58], [3, 0.75], [4, 0.9]];
+  const vsFrac = (k) => { k = Math.min(4, k); for (let i = 1; i < VSC.length; i++) if (k <= VSC[i][0]) { const a = VSC[i - 1], b = VSC[i]; return a[1] + (b[1] - a[1]) * (k - a[0]) / (b[0] - a[0]); } return 0.9; };
+  let vsAlt = null, vsT = 0, vs = 0, vsShown = -1;
+  function vsTick(t) {
+    requestAnimationFrame(vsTick);
+    if (innerWidth < 1100 || !marks.length) return;
+    const a = Math.max(0, altitudeAt(scrollY + innerHeight * 0.5));
+    if (vsAlt !== null && t > vsT) {
+      const raw = clamp((a - vsAlt) / ((t - vsT) / 1000) * 0.5, -4000, 4000);   // scaled so a steady scroll reads about 1,000 to 3,000 ft/min
+      vs += (raw - vs) * 0.12;
+    }
+    vsAlt = a; vsT = t;
+    const shown = Math.round(vs / 50) * 50;
+    if (shown === vsShown) return;
+    vsShown = shown;
+    const f = vsFrac(Math.abs(shown) / 1000) * 50, down = shown < 0;
+    vsiBar.style.top = (down ? 50 : 50 - f) + '%'; vsiBar.style.height = f + '%';
+    vsiBox.style.top = (50 + (down ? f : -f)) + '%';
+    vsiBox.textContent = Math.abs(shown);
+  }
+  requestAnimationFrame(vsTick);
+
+  /* ---------- the page is a descent: altitude marks ---------- */
+  let marks = [];
+  function altitudeAt(y) {
+    if (!marks.length || y <= marks[0].y) return marks.length ? marks[0].alt : 74500;
+    for (let i = 1; i < marks.length; i++) {
+      if (y <= marks[i].y) {
+        const a = marks[i - 1], b = marks[i];
+        return a.alt + (b.alt - a.alt) * clamp((y - a.y) / Math.max(1, b.y - a.y), 0, 1);
+      }
+    }
+    return marks[marks.length - 1].alt;
+  }
+
+  /* ---------- measure ---------- */
+  const tops = {};
+  const hero = $('#top'), bar = $('#bar');
+  const chapters = Array.from(document.querySelectorAll('.chapter img'));
+  function measure() {
+    vh = innerHeight; vw = innerWidth;
+    marks = Array.from(document.querySelectorAll('[data-alt]'))
+      .map((el) => ({ y: el.getBoundingClientRect().top + scrollY, alt: +el.dataset.alt }))
+      .sort((a, b) => a.y - b.y);
+    for (const id of ['mobile']) {
+      const el = document.getElementById(id), r = el.getBoundingClientRect();
+      tops[id] = { top: r.top + scrollY, h: el.offsetHeight };
+    }
+    update();
+  }
+  const progressOf = (id) => {
+    const t = tops[id];
+    return t ? clamp((scrollY - t.top) / Math.max(1, t.h - vh), 0, 1) : 0;
+  };
+
+  /* ---------- per-frame update ---------- */
+  const altBox = $('#altBox'), altDrum = $('#altDrum'), tapeFL = $('#tapeFL'), altPill = $('#altPill'), phase = $('#phase');
+  const heroImg = $('#heroImg'), dims = $('#dims'), flareBg = $('#flareBg');
+  const word = $('#word'), hat = $('#hat');
+  let lastWord = '';
+  function update() {
+    const y = scrollY;
+    const alt = Math.max(0, altitudeAt(y + vh * 0.5));
+
+    // header, tape and readouts
+    bar.classList.toggle('solid', y > hero.offsetHeight - 90);
+    const shownAlt = alt > 100 ? Math.round(alt / 10) * 10 : Math.round(alt);
+    strip.style.transform = 'translateY(' + (tapeWin.clientHeight / 2 - (TOP - alt) / 1000 * PX) + 'px)';
+    altBox.textContent = Math.floor(shownAlt / 100);
+    const tens = Math.floor(shownAlt % 100 / 10) * 10, p2 = (n) => String((n + 100) % 100).padStart(2, '0');
+    altDrum.innerHTML = '<span>' + p2(tens + 10) + '</span><span>' + p2(tens) + '</span><span>' + p2(tens - 10) + '</span>';
+    tapeFL.textContent = 'FL' + String(Math.round(shownAlt / 100)).padStart(3, '0');
+    altPill.textContent = shownAlt.toLocaleString('en-US');
+    phase.textContent = alt >= 55000 ? 'CRUISE' : alt >= 2000 ? 'DESCENT' : alt >= 50 ? 'APPROACH' : alt >= 0.5 ? 'FLARE' : 'ON THE GROUND';
+
+    if (!reduce) {
+      // hero drifts down and in; photo chapters move against the scroll
+      if (y < vh * 1.4) { heroImg.style.setProperty('--hy', (y * 0.28).toFixed(1) + 'px'); heroImg.style.setProperty('--hs', (1.04 + y / vh * 0.05).toFixed(4)); }
+      chapters.forEach((img) => {
+        const r = img.parentElement.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        const t = (vh - r.top) / (vh + r.height);
+        img.style.setProperty('--py', ((t - 0.5) * -0.12 * r.height).toFixed(1) + 'px');
+      });
+    }
+
+    // planform dimension line draws in
+    const dr = dims.getBoundingClientRect();
+    dims.style.setProperty('--draw', clamp((vh * 0.92 - dr.top) / (vh * 0.5), 0, 1).toFixed(3));
+
+    // landing: mobile's callouts
+    const inFlare = y + vh > tops.mobile.top && y < tops.mobile.top + tops.mobile.h;
+    if (inFlare) {
+      if (!reduce) flareBg.style.setProperty('--fz', (1 + clamp(1 - alt / 1500, 0, 1) * 0.12).toFixed(4));
+      hat.textContent = Math.round(Math.min(alt, 1500));
+      const w = alt > 12 ? 'On final' : alt > 6.5 ? '“Ten…”' : alt > 3 ? '“Five…”' : alt > 1.4 ? '“Two…”' : alt > 0.3 ? '“One…”' : 'Touchdown';
+      if (w !== lastWord) {
+        word.textContent = w; lastWord = w;
+        if (!reduce) { word.classList.remove('pop'); void word.offsetWidth; word.classList.add('pop'); }
+      }
+    }
+  }
+
+  let ticking = false;
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, { passive: true });
+  let rz;
+  addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(measure, 120); });
+  addEventListener('load', measure);
+  if ('ResizeObserver' in window) {
+    let last = 0;
+    new ResizeObserver(() => { const h = document.body.scrollHeight; if (h !== last) { last = h; clearTimeout(rz); rz = setTimeout(measure, 60); } }).observe(document.body);
+  }
+  measure();
+
+  /* ---------- cockpit: MFD pages ---------- */
+  const PAGES = { PFD: 'scr_mfd_pfd', EFA: 'scr_mfd_efa', PERF: 'scr_mfd_perf', INIT: 'scr_mfd_init', ICAW: 'scr_mfd_icaw' };
+  const NAMES = { PFD: 'the primary flight display', EFA: 'the electronic flight aid checklist page', PERF: 'the PERF engine and fuel page', INIT: 'the INS initialization page', ICAW: 'the caution and warning page' };
+  function show(scr, page, animate) {
+    const img = scr.querySelector('img');
+    scr.dataset.cur = page;
+    const swap = () => { img.src = 'img/' + PAGES[page] + '.png'; img.alt = 'MFD showing ' + NAMES[page]; };
+    if (!animate || reduce) { swap(); return; }
+    scr.classList.remove('boot'); void scr.offsetWidth; scr.classList.add('boot');
+    setTimeout(swap, 300);
+  }
+  const center = document.querySelector('.scr-c'), chips = Array.from(document.querySelectorAll('.chip'));
+  const syncChips = () => chips.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.page === center.dataset.cur)));
+  chips.forEach((b) => b.addEventListener('click', () => { show(center, b.dataset.page, true); syncChips(); }));
+  document.querySelectorAll('button.scr').forEach((scr) => {
+    const list = scr.dataset.pages.split(',');
+    scr.dataset.cur = list[0];
+    scr.addEventListener('click', () => {
+      const next = list[(list.indexOf(scr.dataset.cur) + 1) % list.length];
+      show(scr, next, true); if (scr === center) syncChips();
+    });
+  });
+  if ('IntersectionObserver' in window && !reduce) {
+    const io = new IntersectionObserver((es) => {
+      if (es.some((e) => e.isIntersecting)) {
+        io.disconnect();
+        Object.values(PAGES).forEach((p) => { const i = new Image(); i.src = 'img/' + p + '.png'; });
+        document.querySelectorAll('.scr').forEach((s, k) => setTimeout(() => { s.classList.remove('boot'); void s.offsetWidth; s.classList.add('boot'); }, k * 180));
+      }
+    }, { threshold: 0.45 });
+    io.observe($('#panel'));
+  }
+
+  /* ---------- Mission Hub button: put the Shopify discount code in data-code and the text of the saving in data-off (for example "20% off") ---------- */
+  (() => {
+    const a = $('#mhubAdd'); if (!a || !a.dataset.code) return;
+    a.href = 'https://www.miltechsimulations.com/discount/' + encodeURIComponent(a.dataset.code) + '?redirect=' + encodeURIComponent('/cart/add?id=51574093578543&quantity=1');
+    a.innerHTML = '<span aria-hidden="true">+</span> Add Mission Hub to the cart' + (a.dataset.off ? ' · ' + a.dataset.off : ' at a discount');
+  })();
+
+  /* ---------- annunciator lamps ---------- */
+  const lamps = Array.from(document.querySelectorAll('.lamp'));
+  if ('IntersectionObserver' in window) {
+    const lo = new IntersectionObserver((es) => {
+      es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const k = lamps.indexOf(e.target);
+        setTimeout(() => e.target.classList.add('lit'), reduce ? 0 : (k % 4) * 140 + 120);
+        lo.unobserve(e.target);
+      });
+    }, { threshold: 0.6 });
+    lamps.forEach((l) => lo.observe(l));
+  } else {
+    lamps.forEach((l) => l.classList.add('lit'));
+  }
+})();
+</script>
