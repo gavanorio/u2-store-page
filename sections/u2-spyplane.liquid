@@ -713,6 +713,7 @@
 .u2p .cc { padding: 12px; }
 .u2p .cc figcaption { font-size: 13.5px; }
 }
+.u2p .buy-x b .by { font-weight: 400; color: rgba(255,255,255,.55); white-space: nowrap; }
 .u2p .final .lede, .u2p .final .eyebrow, .u2p .history .lede, .u2p .flare .lede { color: var(--on-dark); }
 .u2p .final { background: radial-gradient(90% 60% at 50% 58%, #2a2d33 0%, #15161a 55%, #0b0d10 100%); }
 .u2p .final-buy { display: block; margin-top: -2vw; padding-bottom: 72px; }
@@ -792,10 +793,10 @@
           <a class="btn btn-light btn-block" id="addCart" href="https://www.miltechsimulations.com/products/miltech-simulations-u2-spyplane" target="_blank" rel="noopener" aria-disabled="true">Available 13 Nov · 14:00Z</a>
           <p class="tminus" id="tminus">Releases 13 November 2026, 14:00Z</p>
           <hr class="buy-sp">
-          <button type="button" class="buy-x" data-add="ton" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Tonopah Test Range</b><small><strong>{{ section.settings.tonopah_text | escape }}</strong></small></div>{% if section.settings.tonopah_badge != blank %}<em class="pct">{{ section.settings.tonopah_badge | escape }}</em>{% endif %}</button>
-          <button type="button" class="buy-x" data-add="bealem" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB · Modern Day</b><small><strong>{{ section.settings.beale_a_text | escape }}</strong></small></div>{% if section.settings.beale_a_badge != blank %}<em class="pct">{{ section.settings.beale_a_badge | escape }}</em>{% endif %}</button>
-          <button type="button" class="buy-x" data-add="bealer" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB · Retro 1980s</b><small><strong>{{ section.settings.beale_b_text | escape }}</strong></small></div>{% if section.settings.beale_b_badge != blank %}<em class="pct">{{ section.settings.beale_b_badge | escape }}</em>{% endif %}</button>
           <button type="button" class="buy-x" data-add="hub" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Miltech Mission Hub</b><small><strong>{{ section.settings.hub_off | escape }}</strong></small></div>{% if section.settings.hub_badge != blank %}<em class="pct">{{ section.settings.hub_badge | escape }}</em>{% endif %}</button>
+          <button type="button" class="buy-x" data-add="ton" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Tonopah Test Range <span class="by">– Sundownersim</span></b><small><strong>{{ section.settings.tonopah_text | escape }}</strong></small></div>{% if section.settings.tonopah_badge != blank %}<em class="pct">{{ section.settings.tonopah_badge | escape }}</em>{% endif %}</button>
+          <button type="button" class="buy-x" data-add="bealem" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB · Modern Day <span class="by">– Blackbird</span></b><small><strong>{{ section.settings.beale_a_text | escape }}</strong></small></div>{% if section.settings.beale_a_badge != blank %}<em class="pct">{{ section.settings.beale_a_badge | escape }}</em>{% endif %}</button>
+          <button type="button" class="buy-x" data-add="bealer" aria-pressed="false"><span aria-hidden="true">+</span><div><b>Beale AFB · Retro 1980s <span class="by">– Blackbird</span></b><small><strong>{{ section.settings.beale_b_text | escape }}</strong></small></div>{% if section.settings.beale_b_badge != blank %}<em class="pct">{{ section.settings.beale_b_badge | escape }}</em>{% endif %}</button>
         </div>
         <div class="pair">
           <dl class="compat"><dt>Simulator compatibility</dt><dd>MSFS 2024: Fully compatible</dd><dd class="no">MSFS 2020: Not compatible</dd></dl>
