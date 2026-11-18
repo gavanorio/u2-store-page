@@ -8,6 +8,9 @@ OUT = '/home/claude/shopify-u2'
 TEST = '/home/claude/shopifytest'
 src = open(SRC + '/index.html', encoding='utf-8').read()
 
+# The checked-in gallery assets also work when opening prototype.html directly.
+src = src.replace('../files/u2s_liv_', 'img/liv/').replace('../files/u2s_', 'img/')
+
 # ---------- split ----------
 css = src[src.index('<style>') + 7: src.index('</style>')]
 body = src[src.index('</style>') + 8: src.index('<script>')]
@@ -86,9 +89,9 @@ body = body.replace('Release offer USD $36.99', 'Release offer @@PRICE@@')
 for KEY in ('ton', 'bealem', 'bealer', 'hub'):
     body, n = re.subn(r'(<button[^>]*data-add="' + KEY + r'".*?<small>).*?(</small></div>).*?(</button>)', r'\1<strong>@@DEAL_' + KEY + r'@@</strong>\2@@BADGE_' + KEY + r'@@\3', body, count=1, flags=re.S)
     assert n == 1, KEY
-H = 'Add Mission Hub to the cart · USD $9.99 <em class="pct">-38%</em>'
+H = 'Add Mission Hub to the cart Â· USD $9.99 <em class="pct">-38%</em>'
 assert H in body
-body = body.replace(H, 'Add Mission Hub to the cart · @@HUBPRICE@@@@HUBBADGE@@')
+body = body.replace(H, 'Add Mission Hub to the cart Â· @@HUBPRICE@@@@HUBBADGE@@')
 body = re.sub(r'id="mhubAdd" data-code="" data-off=""', 'id="mhubAdd" data-code="@@HUBCODE@@" data-off="@@HUBOFF@@"', body)
 assert '@@HUBCODE@@' in body
 
@@ -142,7 +145,7 @@ js = js.replace(old, r'''  /* ---------- store cart: add with the Shopify cart f
     e.preventDefault();
     addToCart([CART.u2], addCart);
   });''')
-js = js.replace("heroT.textContent = 'Out now · USD $36.99';", "heroT.textContent = 'Out now · ' + CART.price;")
+js = js.replace("heroT.textContent = 'Out now Â· USD $36.99';", "heroT.textContent = 'Out now Â· ' + CART.price;")
 assert "CART.price" in js
 # Mission Hub button
 a = js.index("  /* ---------- Mission Hub button"); b = js.index("  /* ---------- annunciator lamps")
@@ -252,6 +255,12 @@ for root, _, fs in os.walk(SRC + '/img'):
         dyn = flat.startswith(('c_', 'shot_', 'liv_', 'scr_', 'x_sc', 'artw_'))
         if flat in used or dyn:
             shutil.copy(os.path.join(root, f), f'{OUT}/files/u2s_{flat}'); names.append(flat)
+# Prefer the current livery renders over older gallery exports.
+gallery_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'files')
+for f in os.listdir(gallery_dir):
+    if f.startswith(('u2s_liv_', 'u2s_artw_')) and f.endswith('.webp'):
+        shutil.copy(os.path.join(gallery_dir, f), os.path.join(OUT, 'files', f))
+        names.append(f[len('u2s_'):])
 missing = [u for u in used if u not in names]
 print('liquid KB', len(liquid.encode()) // 1024, 'pictures', len(names), 'missing', missing)
 

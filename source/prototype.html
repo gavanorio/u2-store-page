@@ -1112,32 +1112,18 @@ button { font-family: inherit; }
         <div class="liv-col">
           <h3>Liveries</h3>
           <div class="liv-stage">
-            <img id="livImg" src="img/liv/u2s-usaf-801066.webp" width="930" height="340" loading="lazy" alt="Side view of the U-2S in the USAF 80-1066 livery">
-            <div class="liv-name"><b id="livName">USAF 80-1066</b><span id="livIdx">01 / 17 previews</span></div>
+            <img id="livImg" src="../files/u2s_liv_u2s-usaf-801066.webp" width="930" height="340" loading="lazy" alt="Side view of the U-2S in the USAF 80-1066 livery">
+            <div class="liv-name"><b id="livName">USAF 80-1066</b><span id="livIdx">01 / 22 previews</span></div>
           </div>
           <div class="liv-list" id="livList" role="group" aria-label="Choose a livery"></div>
-          <h4>Additional liveries</h4>
-          <ul>
-            <li>USAF 68-10329 Hawk</li>
-            <li>USAF 80-1077 5th RS</li>
-            <li>USAF 80-1078 (bare metal)</li>
-            <li>USAF 80-1081</li>
-            <li>USAF 80-1099</li>
-          </ul>
         </div>
         <div class="liv-col">
           <h3>Nose art and SPAN art</h3>
           <div class="liv-stage art">
-            <img id="artImg" src="img/artw_nose_801069.webp" width="1300" height="470" loading="lazy" alt="Nose art of USAF 80-1069">
-            <div class="liv-name"><b id="artName">Nose art · USAF 80-1069</b><span id="artIdx">01 / 04 previews</span></div>
+            <img id="artImg" src="../files/u2s_artw_nose_801069.webp" width="1300" height="470" loading="lazy" alt="Nose art of USAF 80-1069">
+            <div class="liv-name"><b id="artName">Nose art · USAF 80-1069</b><span id="artIdx">01 / 07 previews</span></div>
           </div>
           <div class="liv-list" id="artList" role="group" aria-label="Choose an artwork"></div>
-          <h4>Additional nose art</h4>
-          <ul>
-            <li>USAF 68-10329 Hawk &mdash; Hawkens tribute on the standard nose</li>
-            <li>USAF 80-1067 &mdash; flag on the SYERS-2A nose</li>
-            <li>USAF 80-1099 &mdash; artwork on the ASARS-2 nose</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -1513,19 +1499,39 @@ button { font-family: inherit; }
 
   /* ---------- liveries ---------- */
   const LIV = [
-    ['USAF-801066', 'USAF 80-1066'], ['USAF-801067', 'USAF 80-1067'], ['USAF-801069', 'USAF 80-1069'], ['USAF-801070', 'USAF 80-1070'],
-    ['USAF-801070-WR', 'USAF 80-1070 WR'], ['USAF-801076', 'USAF 80-1076'], ['USAF-801077', 'USAF 80-1077'],
-    ['USAF-801085', 'USAF 80-1085'], ['USAF-801087', 'USAF 80-1087'], ['USAF-801092', 'USAF 80-1092'], ['USAF-801094', 'USAF 80-1094'],
-    ['USAF-801096', 'USAF 80-1096'], ['USAF-6810329', 'USAF 68-10329'], ['USAF-6810331', 'USAF 68-10331'], ['USAF-6810337', 'USAF 68-10337'],
-    ['9RW-6810331', '9RW 68-10331'], ['UN-801069', 'UN 80-1069']
+    ['USAF-801066', 'USAF 80-1066'],
+    ['USAF-801067', 'USAF 80-1067'],
+    ['USAF-801069', 'USAF 80-1069'],
+    ['USAF-801070', 'USAF 80-1070'],
+    ['USAF-801070-WR', 'USAF 80-1070 WR'],
+    ['USAF-801076', 'USAF 80-1076'],
+    ['USAF-801077', 'USAF 80-1077'],
+    ['USAF-801077-5RS', 'USAF 80-1077 5th RS'],
+    ['USAF-801078', 'USAF 80-1078 (bare metal)'],
+    ['USAF-801081', 'USAF 80-1081'],
+    ['USAF-801085', 'USAF 80-1085'],
+    ['USAF-801087', 'USAF 80-1087'],
+    ['USAF-801092', 'USAF 80-1092'],
+    ['USAF-801094', 'USAF 80-1094'],
+    ['USAF-801096', 'USAF 80-1096'],
+    ['USAF-801099', 'USAF 80-1099'],
+    ['USAF-6810329', 'USAF 68-10329'],
+    ['USAF-6810329-Hawk', 'USAF 68-10329 Hawk'],
+    ['USAF-6810331', 'USAF 68-10331'],
+    ['USAF-6810337', 'USAF 68-10337'],
+    ['9RW-6810331', '9RW 68-10331'],
+    ['UN-801069', 'UN 80-1069']
   ];
-  const ART = [['artw_nose_801069', 'Nose art · USAF 80-1069', 'Nose art of USAF 80-1069'], ['artw_nose_801077', 'Nose art · USAF 80-1077', 'Nose art of USAF 80-1077'], ['artw_nose_801094', 'Nose art · USAF 80-1094', 'Nose art of USAF 80-1094'], ['artw_span_801077', 'SPAN art · USAF 80-1077', 'Artwork on the SPAN antenna fairing of USAF 80-1077']];
+  const ART = [['artw_nose_801069', 'Nose art · USAF 80-1069', 'Nose art of USAF 80-1069'], ['artw_nose_801077', 'Nose art · USAF 80-1077', 'Nose art of USAF 80-1077'], ['artw_nose_801094', 'Nose art · USAF 80-1094', 'Nose art of USAF 80-1094'], ['artw_span_801077', 'SPAN art · USAF 80-1077', 'Artwork on the SPAN antenna fairing of USAF 80-1077'],
+    ['artw_nose_6810329_hawk', 'Hawkens tribute · USAF 68-10329 Hawk', 'Hawkens tribute across the standard nose'],
+    ['artw_nose_801067', 'Flag · USAF 80-1067', 'US flag on the right side of the SYERS-2A nose'],
+    ['artw_nose_801099', 'ASARS-2 nose art · USAF 80-1099', 'Tribute artwork on the ASARS-2 nose and forward fuselage']];
   const artList = $('#artList'), artImg = $('#artImg'), artName = $('#artName'), artIdx = $('#artIdx');
   ART.forEach(([f, name, alt], i) => {
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = name; b.setAttribute('aria-pressed', String(i === 0));
     b.addEventListener('click', () => {
-      artImg.src = 'img/' + f + '.webp'; artImg.alt = alt; artName.textContent = name;
+      artImg.src = '../files/u2s_' + f + '.webp'; artImg.alt = alt; artName.textContent = name;
       artIdx.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(ART.length).padStart(2, '0') + ' previews';
       Array.from(artList.children).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     });
@@ -1536,7 +1542,7 @@ button { font-family: inherit; }
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = name; b.setAttribute('aria-pressed', String(i === 0));
     b.addEventListener('click', () => {
-      livImg.src = 'img/liv/u2s-' + id.toLowerCase() + '.webp';
+      livImg.src = '../files/u2s_liv_u2s-' + id.toLowerCase() + '.webp';
       livImg.alt = 'Side view of the U-2S in the ' + name + ' livery';
       livName.textContent = name;
       livIdx.textContent = String(i + 1).padStart(2, '0') + ' / ' + LIV.length + ' previews';
