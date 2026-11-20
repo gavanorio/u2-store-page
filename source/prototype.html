@@ -1112,7 +1112,7 @@ button { font-family: inherit; }
         <div class="liv-col">
           <h3>Liveries</h3>
           <div class="liv-stage">
-            <img id="livImg" src="../files/u2s_liv_u2s-usaf-801066.webp" width="930" height="340" loading="lazy" alt="Side view of the U-2S in the USAF 80-1066 livery">
+            <img id="livImg" src="../files/u2s_liv_u2s-usaf-801066.webp?v=20261120" width="930" height="340" loading="lazy" alt="Side view of the U-2S in the USAF 80-1066 livery">
             <div class="liv-name"><b id="livName">USAF 80-1066</b><span id="livIdx">01 / 22 previews</span></div>
           </div>
           <div class="liv-list" id="livList" role="group" aria-label="Choose a livery"></div>
@@ -1120,7 +1120,7 @@ button { font-family: inherit; }
         <div class="liv-col">
           <h3>Nose art and SPAN art</h3>
           <div class="liv-stage art">
-            <img id="artImg" src="../files/u2s_artw_nose_801069.webp" width="1300" height="470" loading="lazy" alt="Nose art on the right side of the ASARS-2 nose of USAF 80-1069">
+            <img id="artImg" src="../files/u2s_artw_nose_801069.webp?v=20261120" width="1300" height="470" loading="lazy" alt="Nose art on the right side of the ASARS-2 nose of USAF 80-1069">
             <div class="liv-name"><b id="artName">Nose art · USAF 80-1069 (right)</b><span id="artIdx">01 / 09 previews</span></div>
           </div>
           <div class="liv-list" id="artList" role="group" aria-label="Choose an artwork"></div>
@@ -1532,7 +1532,7 @@ button { font-family: inherit; }
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = name; b.setAttribute('aria-pressed', String(i === 0));
     b.addEventListener('click', () => {
-      artImg.src = '../files/u2s_' + f + '.webp'; artImg.alt = alt; artName.textContent = name;
+      artImg.src = '../files/u2s_' + f + '.webp?v=20261120'; artImg.alt = alt; artName.textContent = name;
       artIdx.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(ART.length).padStart(2, '0') + ' previews';
       Array.from(artList.children).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     });
@@ -1543,7 +1543,7 @@ button { font-family: inherit; }
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = name; b.setAttribute('aria-pressed', String(i === 0));
     b.addEventListener('click', () => {
-      livImg.src = '../files/u2s_liv_u2s-' + id.toLowerCase() + '.webp';
+      livImg.src = '../files/u2s_liv_u2s-' + id.toLowerCase() + '.webp?v=20261120';
       livImg.alt = 'Side view of the U-2S in the ' + name + ' livery';
       livName.textContent = name;
       livIdx.textContent = String(i + 1).padStart(2, '0') + ' / ' + LIV.length + ' previews';
