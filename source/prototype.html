@@ -1120,8 +1120,8 @@ button { font-family: inherit; }
         <div class="liv-col">
           <h3>Nose art and SPAN art</h3>
           <div class="liv-stage art">
-            <img id="artImg" src="../files/u2s_artw_nose_801069.webp" width="1300" height="470" loading="lazy" alt="Nose art of USAF 80-1069">
-            <div class="liv-name"><b id="artName">Nose art · USAF 80-1069</b><span id="artIdx">01 / 07 previews</span></div>
+            <img id="artImg" src="../files/u2s_artw_nose_801069.webp" width="1300" height="470" loading="lazy" alt="Nose art on the right side of the ASARS-2 nose of USAF 80-1069">
+            <div class="liv-name"><b id="artName">Nose art · USAF 80-1069 (right)</b><span id="artIdx">01 / 09 previews</span></div>
           </div>
           <div class="liv-list" id="artList" role="group" aria-label="Choose an artwork"></div>
         </div>
@@ -1522,9 +1522,10 @@ button { font-family: inherit; }
     ['9RW-6810331', '9RW 68-10331'],
     ['UN-801069', 'UN 80-1069']
   ];
-  const ART = [['artw_nose_801069', 'Nose art · USAF 80-1069', 'Nose art of USAF 80-1069'], ['artw_nose_801077', 'Nose art · USAF 80-1077', 'Nose art of USAF 80-1077'], ['artw_nose_801094', 'Nose art · USAF 80-1094', 'Nose art of USAF 80-1094'], ['artw_span_801077', 'SPAN art · USAF 80-1077', 'Artwork on the SPAN antenna fairing of USAF 80-1077'],
-    ['artw_nose_6810329_hawk', 'Hawkens tribute · USAF 68-10329 Hawk', 'Hawkens tribute across the standard nose'],
-    ['artw_nose_801067', 'Flag · USAF 80-1067', 'US flag on the right side of the SYERS-2A nose'],
+  const ART = [['artw_nose_801069', 'Nose art · USAF 80-1069 (right)', 'Nose art on the right side of the ASARS-2 nose of USAF 80-1069'], ['artw_nose_801069_left', 'Nose art · USAF 80-1069 (left)', 'Nose art on the left side of the ASARS-2 nose of USAF 80-1069'], ['artw_nose_801077', 'Nose art · USAF 80-1077', 'Nose art of USAF 80-1077'], ['artw_nose_801094', 'Nose art · USAF 80-1094', 'Nose art of USAF 80-1094'], ['artw_span_801077', 'SPAN art · USAF 80-1077', 'Artwork on the SPAN antenna fairing of USAF 80-1077'],
+    ['artw_span_801067', 'SPAN art · USAF 80-1067', 'Artwork on the SPAN antenna fairing of USAF 80-1067'],
+    ['artw_nose_6810329_hawk', 'Hawkens tribute · USAF 68-10329 Hawk', 'Hawkens tribute on the left side of the standard nose'],
+    ['artw_nose_801067', 'Flag · USAF 80-1067', 'US flag on the SYERS-2A nose and portrait on the right side of the forward fuselage'],
     ['artw_nose_801099', 'ASARS-2 nose art · USAF 80-1099', 'Tribute artwork on the ASARS-2 nose and forward fuselage']];
   const artList = $('#artList'), artImg = $('#artImg'), artName = $('#artName'), artIdx = $('#artIdx');
   ART.forEach(([f, name, alt], i) => {
