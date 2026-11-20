@@ -89,6 +89,10 @@ def fix_materials():
         if not m.use_nodes: continue
         nt=m.node_tree
         bs=[n for n in nt.nodes if n.type=='BSDF_PRINCIPLED']
+        if m.get('invisible') and bs:
+            for l in list(bs[0].inputs['Alpha'].links): nt.links.remove(l)
+            bs[0].inputs['Alpha'].default_value=0.0
+            continue
         gb=e.get('ASOBO_material_blend_gbuffer')
         if gb and bs and not m.get('invisible'):
             f=gb.get('baseColorBlendFactor',1)
@@ -105,8 +109,8 @@ def fix_materials():
             for l in list(b.inputs['Base Color'].links): nt.links.remove(l)
             for l in list(b.inputs['Alpha'].links): nt.links.remove(l)
             amber='AMBER' in m.name.upper()
-            b.inputs['Base Color'].default_value=(0.45,0.3,0.15,1) if amber else (0.16,0.27,0.42,1)
-            b.inputs['Alpha'].default_value=0.62; b.inputs['Roughness'].default_value=0.06; b.inputs['Metallic'].default_value=0.0
+            b.inputs['Base Color'].default_value=(0.45,0.3,0.15,1) if amber else (0.075,0.095,0.125,1)
+            b.inputs['Alpha'].default_value=0.9; b.inputs['Roughness'].default_value=0.06; b.inputs['Metallic'].default_value=0.0
             m['glass']=1
         for n in list(nt.nodes):
             if n.type=='NORMAL_MAP':
